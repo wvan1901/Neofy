@@ -3,7 +3,6 @@ package spotify
 import (
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"neofy/internal/scheduler"

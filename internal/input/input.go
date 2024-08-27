@@ -1,6 +1,8 @@
 package input
 
 import (
+	"errors"
+	"fmt"
 	"neofy/internal/config"
 	"neofy/internal/consts"
 	"neofy/internal/spotify"
@@ -22,9 +24,10 @@ func ProcessInput(d *config.AppData) {
 		if err != nil {
 			break
 		}
-		// TODO: Find a way to get previous song
-		d.Player.CurrentSong.Name = "PrevSong"
-		d.Player.CurrentSong.Artist = "PrevArtist"
+		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		if err != nil {
+			break
+		}
 	case 'p', 'P':
 		// Play song
 		if d.Player.IsPlaying {
@@ -51,9 +54,10 @@ func ProcessInput(d *config.AppData) {
 		if err != nil {
 			break
 		}
-		// TODO: Find a way to get previous song
-		d.Player.CurrentSong.Name = "NextSong"
-		d.Player.CurrentSong.Artist = "NextArtist"
+		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		if err != nil {
+			break
+		}
 	case 'r', 'R':
 		// Start Loop: FEAT:
 	case '-':
@@ -90,14 +94,25 @@ func ProcessInput(d *config.AppData) {
 		d.Player.Volume = newVol
 	case 'f', 'F':
 		// Refresh the current song
-		player, err := spotify.CurrentPlayingTrack(d.Spotify.UserTokens.AccessToken)
+		err := refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
-		d.Player.IsPlaying = player.IsPlaying
-		d.Player.IsShuffled = player.IsShuffled
-		d.Player.CurrentSong.Name = player.SongName
-		d.Player.CurrentSong.Artist = player.Artist
-		d.Player.Repeat = player.Repeat
 	}
+}
+
+func refreshPlayer(accessToken string, mp *config.MusicPlayer) error {
+	if mp == nil {
+		return errors.New("refreshPlayer: mp is nil")
+	}
+	player, err := spotify.CurrentPlayingTrack(accessToken)
+	if err != nil {
+		return fmt.Errorf("refreshPlayer: %w", err)
+	}
+	mp.IsPlaying = player.IsPlaying
+	mp.IsShuffled = player.IsShuffled
+	mp.CurrentSong.Name = player.SongName
+	mp.CurrentSong.Artist = player.Artist
+	mp.Repeat = player.Repeat
+	return nil
 }
