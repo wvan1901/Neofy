@@ -20,7 +20,6 @@ func UpdateApp(d *config.AppData) {
 
 	// Draw everything
 	drawScreen(50, 25, d)
-	d.Display.Buffer.WriteString("Done!") // Moves Cursor
 
 	d.Display.Buffer.WriteString("\033[?25l") // Moves Cursor
 
@@ -40,6 +39,7 @@ func printPlayerView(s []string, buf *strings.Builder) {
 	}
 }
 
+// TODO: If len of row is too long trim it
 func updatePlayerDisplay(mp *config.MusicPlayer) {
 	// If there is no screen then we do nothing
 	s := mp.Display.Screen
@@ -73,6 +73,7 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 	for i := range s {
 		switch i {
 		case len(s) / 2:
+			// TODO: Make the player appear in the middle
 			//"x>    |<    ||    >|    [≥]    <|) =====-----"
 			s[i] = "x>    |<    " + playPause + "    >|    [≥]    " + volume
 		case 0:

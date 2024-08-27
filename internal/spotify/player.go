@@ -10,21 +10,16 @@ import (
 	"strconv"
 )
 
-// TODO: Fix error string messages
-
 // NOTE: If we get a 401 it most likely means we didnt request permission
 // when asking user access token, add scope to func: AuthorizeUserUrl()
 
-// NOTE: When we send a api request we should block/freeze app until we get a response
-
-// NOTE: Only player api endppoint is only avaliable for spotify premium members
+// NOTE: Player api endppoints are only avaliable for spotify premium members
 
 func PlaybackState(accessToken string) (*SlimPlayerData, error) {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("PlaybackState: %w", err)
 	}
-	// TODO: Figure out what information is useful for app
 	apiUrl := "https://api.spotify.com/v1/me/player"
 	headerStr := "Bearer " + accessToken
 
@@ -52,7 +47,6 @@ func PlaybackState(accessToken string) (*SlimPlayerData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("PlaybackState: json: unmarshal: %w", err)
 	}
-	fmt.Println("Wicho: PlaybackState: isPlaying:", respStruct.IsPlaying)
 
 	slimResp := SlimPlayerData{
 		IsPlaying:      respStruct.IsPlaying,
@@ -104,7 +98,7 @@ func StartResumePlayback(accessToken string) error {
 	if err != nil {
 		return fmt.Errorf("StartResumePlayback: json: unmarshal: %w", err)
 	}
-	return errors.New("StartResumePlayback: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
+	return errors.New("StartResumePlayback: Status: " + respStruct.Error.Status + " message: " + respStruct.Error.Message)
 }
 
 func PausePlayback(accessToken string) error {
@@ -254,7 +248,7 @@ func SetPlaybackVolume(accessToken string, volume int) error {
 }
 
 func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
-	// TODO: Implement & test
+	// TODO: Implement progress & duration data
 	// Progress_ms: Progress into the currently playing track or episode. Can be null.
 	// item.duration_ms: duration of entire item
 	err := validTokenFormat(accessToken)
@@ -288,9 +282,7 @@ func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 
 	err = json.Unmarshal(body, &respStruct)
 	if err != nil {
-		//fmt.Println("Wicho: body:", string(body))
-		panic("Wicho: test: " + err.Error())
-		//return nil, fmt.Errorf("CurrentPlayingTrack: json: unmarshal: %w", err)
+		return nil, fmt.Errorf("CurrentPlayingTrack: json: unmarshal: %w", err)
 	}
 
 	slimResp := SlimCurrentSongData{
@@ -300,7 +292,6 @@ func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 		Artist:     respStruct.Item.Artists[0].Name,
 		Repeat:     respStruct.RepeatState,
 	}
-	fmt.Println("Item:", slimResp)
 	return &slimResp, nil
 }
 
@@ -345,7 +336,6 @@ type playbackStateResponse struct {
 	Actions              Action  `json:"actions"`
 }
 
-// TODO: Fix this struct
 type currentTrackResponse struct {
 	RepeatState          string            `json:"repeat_state"`
 	ShuffleState         bool              `json:"shuffle_state"`

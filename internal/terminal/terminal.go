@@ -92,7 +92,6 @@ func (l *LinuxTerm) InitTerminal() {
 func (l *LinuxTerm) GetTerminalSize() (int, int, error) {
 	width, height, err := term.GetSize(0)
 	if err != nil {
-		// Exit Program
 		return 0, 0, fmt.Errorf("GetTerminalSize: %w", err)
 	}
 	return width, height, nil
@@ -105,7 +104,7 @@ func (l *LinuxTerm) CloseTerminal() {
 func (l *LinuxTerm) enableRawMode() {
 	oldState, err := term.MakeRaw(0)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("enableRawMode: %w", err))
 	}
 	l.OldState = oldState
 }
@@ -113,7 +112,7 @@ func (l *LinuxTerm) enableRawMode() {
 func (l *LinuxTerm) disableRawMode() {
 	err := term.Restore(0, l.OldState)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("disableRawMode: %w", err))
 	}
 }
 

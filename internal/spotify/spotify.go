@@ -97,7 +97,7 @@ func LoginUser(clientId string) (string, error) {
 	time.Sleep(2 * time.Second)
 	close(codeChan)
 	// User is logged in by having a code
-	fmt.Println("Wicho: Code:", code)
+	//fmt.Println("Wicho: Code:", code)
 	return code, nil
 }
 
@@ -110,7 +110,7 @@ func UserAccessAndRefreshToken(code, clientId, clientSecret string) (string, str
 	postData := strings.NewReader(data.Encode())
 	req, err := http.NewRequest("POST", apiUrl, postData)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: req: %w", err)
+		return "", "", fmt.Errorf("UserAccessAndRefreshToken: req: %w", err)
 	}
 	authString := clientId + ":" + clientSecret
 	encodedAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(authString))
@@ -120,12 +120,12 @@ func UserAccessAndRefreshToken(code, clientId, clientSecret string) (string, str
 	c := http.Client{}
 	resp, err := c.Do(req)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: client: %w", err)
+		return "", "", fmt.Errorf("UserAccessAndRefreshToken: client: %w", err)
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: read body: %w", err)
+		return "", "", fmt.Errorf("UserAccessAndRefreshToken: read body: %w", err)
 	}
 	respStruct := struct {
 		AccessToken  string `json:"access_token"`
@@ -136,7 +136,7 @@ func UserAccessAndRefreshToken(code, clientId, clientSecret string) (string, str
 	}{}
 	err = json.Unmarshal(body, &respStruct)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: json: unmarshal: %w", err)
+		return "", "", fmt.Errorf("UserAccessAndRefreshToken: json: unmarshal: %w", err)
 	}
 
 	return respStruct.AccessToken, respStruct.RefreshToken, nil
@@ -151,7 +151,7 @@ func RefreshUserTokens(refreshToken, clientId, clientSecret string) (string, str
 	postData := strings.NewReader(data.Encode())
 	req, err := http.NewRequest("POST", apiUrl, postData)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: req: %w", err)
+		return "", "", fmt.Errorf("RefreshUserTokens: req: %w", err)
 	}
 	authString := clientId + ":" + clientSecret
 	encodedAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(authString))
@@ -160,12 +160,12 @@ func RefreshUserTokens(refreshToken, clientId, clientSecret string) (string, str
 	c := http.Client{}
 	resp, err := c.Do(req)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: client: %w", err)
+		return "", "", fmt.Errorf("RefreshUserTokens: client: %w", err)
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: read body: %w", err)
+		return "", "", fmt.Errorf("RefreshUserTokens: read body: %w", err)
 	}
 	respStruct := struct {
 		AccessToken  string `json:"access_token"`
@@ -176,7 +176,7 @@ func RefreshUserTokens(refreshToken, clientId, clientSecret string) (string, str
 	}{}
 	err = json.Unmarshal(body, &respStruct)
 	if err != nil {
-		return "", "", fmt.Errorf("AccessToken: json: unmarshal: %w", err)
+		return "", "", fmt.Errorf("RefreshUserTokens: json: unmarshal: %w", err)
 	}
 
 	return respStruct.AccessToken, respStruct.RefreshToken, nil
@@ -194,16 +194,15 @@ func (s *refreshTokenJob) Execute() {
 	newAccess, newRefresh, err := RefreshUserTokens(s.userTokens.RefreshToken, s.clientId, s.clientSecret)
 	if err != nil {
 		// Handle the error
-		panic(errors.New("Refresh hourly scheduler: Execute: Refresh Token Api failed"))
+		panic(fmt.Errorf("Refresh hourly scheduler: Execute: %w", err))
 	}
-	// Update pointers value
+	// Update value
 	s.userTokens.AccessToken = newAccess
 	// NOTE: When a refresh token is not returned, continue using the existing token.
 	if newRefresh == "" {
 		newRefresh = s.userTokens.RefreshToken
 	}
 	s.userTokens.RefreshToken = newRefresh
-
 }
 
 func RefreshHourlyScheduler(u *User, clientId, clientSecret string) *scheduler.Schedular {

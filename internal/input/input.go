@@ -7,6 +7,7 @@ import (
 	"neofy/internal/terminal"
 )
 
+// TODO: Find a process to handle errors
 func ProcessInput(d *config.AppData) {
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
@@ -19,8 +20,7 @@ func ProcessInput(d *config.AppData) {
 		// Previous Song
 		err := spotify.SkipToPrevious(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
-			//TODO: Find a way to handle transition form spotify to local
-			//break
+			break
 		}
 		// TODO: Find a way to get previous song
 		d.Player.CurrentSong.Name = "PrevSong"
@@ -32,7 +32,7 @@ func ProcessInput(d *config.AppData) {
 		}
 		err := spotify.StartResumePlayback(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
-			//break
+			break
 		}
 		d.Player.IsPlaying = true
 	case 'x', 'X':
@@ -42,14 +42,14 @@ func ProcessInput(d *config.AppData) {
 		}
 		err := spotify.PausePlayback(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
-			//break
+			break
 		}
 		d.Player.IsPlaying = false
 	case 'n', 'N':
 		// Skip Song
 		err := spotify.SkipToNext(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
-			//break
+			break
 		}
 		// TODO: Find a way to get previous song
 		d.Player.CurrentSong.Name = "NextSong"
@@ -69,7 +69,7 @@ func ProcessInput(d *config.AppData) {
 		}
 		err := spotify.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
 		if err != nil {
-			//break
+			break
 		}
 		d.Player.Volume = newVol
 	case '+', '=':
@@ -85,15 +85,14 @@ func ProcessInput(d *config.AppData) {
 		}
 		err := spotify.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
 		if err != nil {
-			//break
+			break
 		}
 		d.Player.Volume = newVol
 	case 'f', 'F':
 		// Refresh the current song
 		player, err := spotify.CurrentPlayingTrack(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
-			//break
-			panic("Wicho: New Func: " + err.Error())
+			break
 		}
 		d.Player.IsPlaying = player.IsPlaying
 		d.Player.IsShuffled = player.IsShuffled
