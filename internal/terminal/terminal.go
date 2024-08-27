@@ -68,15 +68,6 @@ func ReadInputKey() rune {
 	return inputRune
 }
 
-func ProcessKeyPress(l AppTerm) {
-	keyReadRune := ReadInputKey()
-	switch keyReadRune {
-	case consts.CONTROLCASCII:
-		Quit(l)
-		break
-	}
-}
-
 func Quit(l AppTerm) {
 	l.CloseTerminal()
 	fmt.Print("\033[2J")
