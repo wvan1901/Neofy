@@ -56,6 +56,8 @@ func PlaybackState(accessToken string) (*SlimPlayerData, error) {
 		SongName:       respStruct.Item.Name,
 		Artist:         respStruct.Item.Artists[0].Name,
 		Repeat:         respStruct.RepeatState,
+		SongProgress:   respStruct.ProgressMs,
+		SongDuration:   respStruct.Item.DurationMs,
 	}
 
 	return &slimResp, nil
@@ -286,11 +288,13 @@ func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 	}
 
 	slimResp := SlimCurrentSongData{
-		IsPlaying:  respStruct.IsPlaying,
-		IsShuffled: respStruct.ShuffleState,
-		SongName:   respStruct.Item.Name,
-		Artist:     respStruct.Item.Artists[0].Name,
-		Repeat:     respStruct.RepeatState,
+		IsPlaying:    respStruct.IsPlaying,
+		IsShuffled:   respStruct.ShuffleState,
+		SongName:     respStruct.Item.Name,
+		Artist:       respStruct.Item.Artists[0].Name,
+		Repeat:       respStruct.RepeatState,
+		SongProgress: respStruct.ProgressMs,
+		SongDuration: respStruct.Item.DurationMs,
 	}
 	return &slimResp, nil
 }
@@ -303,7 +307,6 @@ func validTokenFormat(token string) error {
 }
 
 // Structs:
-
 type SlimPlayerData struct {
 	IsPlaying      bool
 	IsShuffled     bool
@@ -312,14 +315,18 @@ type SlimPlayerData struct {
 	SongName       string
 	Artist         string
 	Repeat         string
+	SongDuration   int
+	SongProgress   *int
 }
 
 type SlimCurrentSongData struct {
-	IsPlaying  bool
-	IsShuffled bool
-	SongName   string
-	Artist     string
-	Repeat     string
+	IsPlaying    bool
+	IsShuffled   bool
+	SongName     string
+	Artist       string
+	Repeat       string
+	SongDuration int
+	SongProgress *int
 }
 
 // playbackStateResponse
@@ -329,7 +336,7 @@ type playbackStateResponse struct {
 	ShuffleState         bool    `json:"shuffle_state"`
 	Context              Context `json:"context"`
 	Timestamp            int     `json:"timestamp"`
-	ProgressMs           int     `json:"progress_ms"`
+	ProgressMs           *int    `json:"progress_ms"`
 	IsPlaying            bool    `json:"is_playing"`
 	Item                 Item    `json:"item"`
 	CurrentlyPlayingType string  `json:"currently_playing_type"`
@@ -341,7 +348,7 @@ type currentTrackResponse struct {
 	ShuffleState         bool              `json:"shuffle_state"`
 	Context              Context           `json:"context"`
 	Timestamp            int               `json:"timestamp"`
-	ProgressMs           int               `json:"progress_ms"`
+	ProgressMs           *int              `json:"progress_ms"`
 	IsPlaying            bool              `json:"is_playing"`
 	Item                 Item              `json:"item"`
 	CurrentlyPlayingType string            `json:"currently_playing_type"`

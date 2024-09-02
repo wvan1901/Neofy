@@ -7,10 +7,12 @@ import (
 	"neofy/internal/consts"
 	"neofy/internal/spotify"
 	"neofy/internal/terminal"
+	"neofy/internal/timer"
+	"time"
 )
 
 // TODO: Find a process to handle errors
-func ProcessInput(d *config.AppData) {
+func ProcessInput(d *config.AppData, t *timer.Updater) {
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
 	case consts.CONTROLCASCII:
@@ -24,7 +26,7 @@ func ProcessInput(d *config.AppData) {
 		if err != nil {
 			break
 		}
-		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err = RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
@@ -38,6 +40,7 @@ func ProcessInput(d *config.AppData) {
 			break
 		}
 		d.Player.IsPlaying = true
+		go t.Resume()
 	case 'x', 'X':
 		// Pause Song
 		if !d.Player.IsPlaying {
@@ -48,13 +51,14 @@ func ProcessInput(d *config.AppData) {
 			break
 		}
 		d.Player.IsPlaying = false
+		go t.Pause()
 	case 'n', 'N':
 		// Skip Song
 		err := spotify.SkipToNext(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
 			break
 		}
-		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err = RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
@@ -94,14 +98,14 @@ func ProcessInput(d *config.AppData) {
 		d.Player.Volume = newVol
 	case 'f', 'F':
 		// Refresh the current song
-		err := refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err := RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
 	}
 }
 
-func refreshPlayer(accessToken string, mp *config.MusicPlayer) error {
+func RefreshPlayer(accessToken string, mp *config.MusicPlayer) error {
 	if mp == nil {
 		return errors.New("refreshPlayer: mp is nil")
 	}
@@ -114,5 +118,12 @@ func refreshPlayer(accessToken string, mp *config.MusicPlayer) error {
 	mp.CurrentSong.Name = player.SongName
 	mp.CurrentSong.Artist = player.Artist
 	mp.Repeat = player.Repeat
+	if player.SongProgress != nil {
+		p := time.Duration(*player.SongProgress * 1000000)
+		mp.CurrentSong.Progress = &p
+	} else {
+		mp.CurrentSong.Progress = nil
+	}
+	mp.CurrentSong.Duration = time.Duration(player.SongDuration * 1000000)
 	return nil
 }

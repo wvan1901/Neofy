@@ -7,6 +7,7 @@ import (
 	"neofy/internal/spotify"
 	"neofy/internal/terminal"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -37,8 +38,10 @@ type Display struct {
 }
 
 type Song struct {
-	Name   string
-	Artist string
+	Name     string
+	Artist   string
+	Progress *time.Duration
+	Duration time.Duration
 }
 
 func InitAppData() *AppData {
@@ -94,6 +97,13 @@ func InitAppData() *AppData {
 	}
 	newConfig.Player.Repeat = playerData.Repeat
 	newConfig.Player.Volume = playerData.Volume
+	if playerData.SongProgress != nil {
+		p := time.Duration(*playerData.SongProgress * 1000000)
+		newConfig.Player.CurrentSong.Progress = &p
+	} else {
+		newConfig.Player.CurrentSong.Progress = nil
+	}
+	newConfig.Player.CurrentSong.Duration = time.Duration(playerData.SongDuration * 1000000)
 
 	return &newConfig
 }
@@ -156,6 +166,7 @@ func InitMock() *AppData {
 	}
 	newConfig.Songs = sld
 	mpHeight := int(float64(newConfig.Display.Height) * 0.10)
+	progressMs := time.Millisecond * 1000 * 7
 	mp := MusicPlayer{
 		Display: Display{
 			Width:  newConfig.Display.Width,
@@ -168,8 +179,10 @@ func InitMock() *AppData {
 		Volume:         77,
 		Repeat:         "NONE",
 		CurrentSong: Song{
-			Name:   "505",
-			Artist: "Artic Monkeys",
+			Name:     "505",
+			Artist:   "Artic Monkeys",
+			Duration: time.Millisecond * 1000 * 15,
+			Progress: &progressMs,
 		},
 	}
 	newConfig.Player = mp

@@ -17,6 +17,8 @@ const (
 	REDIRECT_URI = "http://localhost:8090/callback"
 )
 
+// TODO: Rewrite config & make it into interface to mock api calls
+
 type Config struct {
 	ClientId         string
 	ClientSecret     string
@@ -142,7 +144,6 @@ func UserAccessAndRefreshToken(code, clientId, clientSecret string) (string, str
 }
 
 func RefreshUserTokens(refreshToken, clientId, clientSecret string) (string, string, error) {
-	// TODO: Test that this func works correctly
 	apiUrl := "https://accounts.spotify.com/api/token"
 	data := url.Values{}
 	data.Add("grant_type", "refresh_token")
