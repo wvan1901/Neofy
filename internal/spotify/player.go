@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 )
 
@@ -250,9 +251,6 @@ func SetPlaybackVolume(accessToken string, volume int) error {
 }
 
 func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
-	// TODO: Implement progress & duration data
-	// Progress_ms: Progress into the currently playing track or episode. Can be null.
-	// item.duration_ms: duration of entire item
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("CurrentPlayingTrack: %w", err)
@@ -297,6 +295,88 @@ func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 		SongDuration: respStruct.Item.DurationMs,
 	}
 	return &slimResp, nil
+}
+
+func RepeatMode(accessToken string, state string) error {
+	err := validTokenFormat(accessToken)
+	if err != nil {
+		return fmt.Errorf("SetRepeatMode: %w", err)
+	}
+	options := []string{"off", "context", "track"}
+	if !slices.Contains(options, state) {
+		return errors.New("SetRepeatMode: not a valid state")
+	}
+
+	apiUrl := "https://api.spotify.com/v1/me/player/repeat?state=" + state
+	headerStr := "Bearer " + accessToken
+
+	req, err := http.NewRequest("PUT", apiUrl, nil)
+	if err != nil {
+		return fmt.Errorf("SetRepeatMode: req: %w", err)
+	}
+	req.Header.Add("Authorization", headerStr)
+	c := http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		return fmt.Errorf("SetRepeatMode: client: %w", err)
+	}
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return nil
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("SetRepeatMode: read body: %w", err)
+	}
+
+	var respStruct PlayerErrorResponse
+	err = json.Unmarshal(body, &respStruct)
+	if err != nil {
+		return fmt.Errorf("SetRepeatMode: json: unmarshal: %w", err)
+	}
+	return errors.New("SetRepeatMode: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
+}
+
+func ShuffleMode(accessToken string, isShuffled bool) error {
+	err := validTokenFormat(accessToken)
+	if err != nil {
+		return fmt.Errorf("ShuffleMode: %w", err)
+	}
+	shuffled := "false"
+	if isShuffled {
+		shuffled = "true"
+	}
+
+	apiUrl := "https://api.spotify.com/v1/me/player/shuffle?state=" + shuffled
+	headerStr := "Bearer " + accessToken
+
+	req, err := http.NewRequest("PUT", apiUrl, nil)
+	if err != nil {
+		return fmt.Errorf("ShuffleMode: req: %w", err)
+	}
+	req.Header.Add("Authorization", headerStr)
+	c := http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		return fmt.Errorf("ShuffleMode: client: %w", err)
+	}
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return nil
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("ShuffleMode: read body: %w", err)
+	}
+
+	var respStruct PlayerErrorResponse
+	err = json.Unmarshal(body, &respStruct)
+	if err != nil {
+		return fmt.Errorf("ShuffleMode: json: unmarshal: %w", err)
+	}
+	return errors.New("ShuffleMode: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
 func validTokenFormat(token string) error {

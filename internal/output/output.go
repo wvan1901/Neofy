@@ -68,6 +68,19 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 	} else {
 		volume += " xxxxx"
 	}
+	shuffled := "->"
+	if mp.IsShuffled {
+		shuffled = "x>"
+	}
+	loop := "???"
+	switch mp.Repeat {
+	case "off":
+		loop = "~~>"
+	case "context":
+		loop = "[≥]"
+	case "track":
+		loop = "[!]"
+	}
 
 	// Write Visual to display
 	for i := range s {
@@ -75,7 +88,7 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 		case len(s) / 2:
 			// TODO: Make the player appear in the middle
 			//"x>    |<    ||    >|    [≥]    <|) =====-----"
-			s[i] = "x>    |<    " + playPause + "    >|    [≥]    " + volume
+			s[i] = shuffled + "    |<    " + playPause + "    >|    " + loop + "    " + volume
 		case 0:
 			if mp.CurrentSong.Name == "" {
 				s[i] = ""

@@ -20,6 +20,11 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		break
 	case 's', 'S':
 		// Shuffle: FEAT:
+		err := spotify.ShuffleMode(d.Spotify.UserTokens.AccessToken, !d.Player.IsShuffled)
+		if err != nil {
+			break
+		}
+		d.Player.IsShuffled = !d.Player.IsShuffled
 	case 'b', 'B':
 		// Previous Song
 		err := spotify.SkipToPrevious(d.Spotify.UserTokens.AccessToken)
@@ -64,6 +69,22 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		}
 	case 'r', 'R':
 		// Start Loop: FEAT:
+		nextLoop := "off"
+		switch d.Player.Repeat {
+		case "off":
+			nextLoop = "context"
+		case "context":
+			nextLoop = "track"
+		case "track":
+			nextLoop = "off"
+		default:
+			break
+		}
+		err := spotify.RepeatMode(d.Spotify.UserTokens.AccessToken, nextLoop)
+		if err != nil {
+			break
+		}
+		d.Player.Repeat = nextLoop
 	case '-':
 		// Decrease Volume if enabled
 		if !d.Player.SupportsVolume {
