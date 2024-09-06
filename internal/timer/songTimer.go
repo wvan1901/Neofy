@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"neofy/internal/config"
 	"neofy/internal/output"
-	"neofy/internal/spotify"
 	"time"
 )
 
@@ -82,7 +81,7 @@ func (s *Updater) Kill() {
 }
 
 func refreshPlayerData(d *config.AppData) error {
-	player, err := spotify.CurrentPlayingTrack(d.Spotify.UserTokens.AccessToken)
+	player, err := d.Player.Controller.CurrentPlayingTrack(d.Spotify.UserTokens.AccessToken)
 	if err != nil {
 		return fmt.Errorf("refreshPlayer: %w", err)
 	}

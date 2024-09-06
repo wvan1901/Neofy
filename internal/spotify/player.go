@@ -11,12 +11,26 @@ import (
 	"strconv"
 )
 
+type Controller interface {
+	PlaybackState(string) (*SlimPlayerData, error)
+	StartResumePlayback(string) error
+	PausePlayback(string) error
+	SkipToNext(string) error
+	SkipToPrevious(string) error
+	SetPlaybackVolume(string, int) error
+	CurrentPlayingTrack(string) (*SlimCurrentSongData, error)
+	RepeatMode(string, string) error
+	ShuffleMode(string, bool) error
+}
+
+type SpotifyPlayer struct{}
+
 // NOTE: If we get a 401 it most likely means we didnt request permission
 // when asking user access token, add scope to func: AuthorizeUserUrl()
 
 // NOTE: Player api endppoints are only avaliable for spotify premium members
 
-func PlaybackState(accessToken string) (*SlimPlayerData, error) {
+func (SpotifyPlayer) PlaybackState(accessToken string) (*SlimPlayerData, error) {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("PlaybackState: %w", err)
@@ -64,7 +78,7 @@ func PlaybackState(accessToken string) (*SlimPlayerData, error) {
 	return &slimResp, nil
 }
 
-func StartResumePlayback(accessToken string) error {
+func (SpotifyPlayer) StartResumePlayback(accessToken string) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("StartResumePlayback: %w", err)
@@ -104,7 +118,7 @@ func StartResumePlayback(accessToken string) error {
 	return errors.New("StartResumePlayback: Status: " + respStruct.Error.Status + " message: " + respStruct.Error.Message)
 }
 
-func PausePlayback(accessToken string) error {
+func (SpotifyPlayer) PausePlayback(accessToken string) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("PausePlayback: %w", err)
@@ -140,7 +154,7 @@ func PausePlayback(accessToken string) error {
 	return errors.New("PausePlayback: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
-func SkipToNext(accessToken string) error {
+func (SpotifyPlayer) SkipToNext(accessToken string) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("SkipToNext: %w", err)
@@ -176,7 +190,7 @@ func SkipToNext(accessToken string) error {
 	return errors.New("SkipToNext: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
-func SkipToPrevious(accessToken string) error {
+func (SpotifyPlayer) SkipToPrevious(accessToken string) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("SkipToPrevious: %w", err)
@@ -212,7 +226,7 @@ func SkipToPrevious(accessToken string) error {
 	return errors.New("SkipToPrevious: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
-func SetPlaybackVolume(accessToken string, volume int) error {
+func (SpotifyPlayer) SetPlaybackVolume(accessToken string, volume int) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("SetPlaybackVolume: %w", err)
@@ -250,7 +264,7 @@ func SetPlaybackVolume(accessToken string, volume int) error {
 	return errors.New("SetPlaybackVolume: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
-func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
+func (SpotifyPlayer) CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("CurrentPlayingTrack: %w", err)
@@ -297,7 +311,7 @@ func CurrentPlayingTrack(accessToken string) (*SlimCurrentSongData, error) {
 	return &slimResp, nil
 }
 
-func RepeatMode(accessToken string, state string) error {
+func (SpotifyPlayer) RepeatMode(accessToken string, state string) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("SetRepeatMode: %w", err)
@@ -338,7 +352,7 @@ func RepeatMode(accessToken string, state string) error {
 	return errors.New("SetRepeatMode: Status: " + respStruct.Error.Status + "message: " + respStruct.Error.Message)
 }
 
-func ShuffleMode(accessToken string, isShuffled bool) error {
+func (SpotifyPlayer) ShuffleMode(accessToken string, isShuffled bool) error {
 	err := validTokenFormat(accessToken)
 	if err != nil {
 		return fmt.Errorf("ShuffleMode: %w", err)

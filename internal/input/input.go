@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"neofy/internal/config"
 	"neofy/internal/consts"
-	"neofy/internal/spotify"
 	"neofy/internal/terminal"
 	"neofy/internal/timer"
 	"time"
@@ -19,15 +18,15 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		terminal.Quit(d.Term)
 		break
 	case 's', 'S':
-		// Shuffle: FEAT:
-		err := spotify.ShuffleMode(d.Spotify.UserTokens.AccessToken, !d.Player.IsShuffled)
+		// Shuffle:
+		err := d.Player.Controller.ShuffleMode(d.Spotify.UserTokens.AccessToken, !d.Player.IsShuffled)
 		if err != nil {
 			break
 		}
 		d.Player.IsShuffled = !d.Player.IsShuffled
 	case 'b', 'B':
 		// Previous Song
-		err := spotify.SkipToPrevious(d.Spotify.UserTokens.AccessToken)
+		err := d.Player.Controller.SkipToPrevious(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
 			break
 		}
@@ -40,7 +39,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		if d.Player.IsPlaying {
 			break
 		}
-		err := spotify.StartResumePlayback(d.Spotify.UserTokens.AccessToken)
+		err := d.Player.Controller.StartResumePlayback(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
 			break
 		}
@@ -51,7 +50,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		if !d.Player.IsPlaying {
 			break
 		}
-		err := spotify.PausePlayback(d.Spotify.UserTokens.AccessToken)
+		err := d.Player.Controller.PausePlayback(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
 			break
 		}
@@ -59,7 +58,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		go t.Pause()
 	case 'n', 'N':
 		// Skip Song
-		err := spotify.SkipToNext(d.Spotify.UserTokens.AccessToken)
+		err := d.Player.Controller.SkipToNext(d.Spotify.UserTokens.AccessToken)
 		if err != nil {
 			break
 		}
@@ -68,7 +67,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 			break
 		}
 	case 'r', 'R':
-		// Start Loop: FEAT:
+		// Start Loop:
 		nextLoop := "off"
 		switch d.Player.Repeat {
 		case "off":
@@ -80,7 +79,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		default:
 			break
 		}
-		err := spotify.RepeatMode(d.Spotify.UserTokens.AccessToken, nextLoop)
+		err := d.Player.Controller.RepeatMode(d.Spotify.UserTokens.AccessToken, nextLoop)
 		if err != nil {
 			break
 		}
@@ -96,7 +95,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		} else if newVol < 0 {
 			newVol = 0
 		}
-		err := spotify.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
+		err := d.Player.Controller.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
 		if err != nil {
 			break
 		}
@@ -112,7 +111,7 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		} else if newVol < 0 {
 			newVol = 0
 		}
-		err := spotify.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
+		err := d.Player.Controller.SetPlaybackVolume(d.Spotify.UserTokens.AccessToken, newVol)
 		if err != nil {
 			break
 		}
@@ -130,7 +129,7 @@ func RefreshPlayer(accessToken string, mp *config.MusicPlayer) error {
 	if mp == nil {
 		return errors.New("refreshPlayer: mp is nil")
 	}
-	player, err := spotify.CurrentPlayingTrack(accessToken)
+	player, err := mp.Controller.CurrentPlayingTrack(accessToken)
 	if err != nil {
 		return fmt.Errorf("refreshPlayer: %w", err)
 	}
