@@ -15,37 +15,39 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// TODO: Abstract Spotify & Music Player into a interface
+
 type AppData struct {
-	Playlist Display
-	Player   MusicPlayer
 	Display  display.Display
-	Songs    Display
-	Term     terminal.AppTerm
+	Playlist Display // Not Implemented Yet
+	Player   MusicPlayer
+	Songs    Display // Not Implemented Yet
 	Spotify  spotify.Config
+	Term     terminal.AppTerm
 }
 
 type MusicPlayer struct {
+	Controller     spotify.Controller
+	CurrentSong    Song
 	Display        Display // What to show in cli
 	IsPlaying      bool    // Is something playing
 	IsShuffled     bool    // Is playlist suffled
+	Repeat         string  // track, context, off
 	SupportsVolume bool    // Does Device support volume
 	Volume         int     // 0-100
-	CurrentSong    Song
-	Repeat         string // track, context, off
-	Controller     spotify.Controller
 }
 
 type Display struct {
-	Width  int
 	Height int
 	Screen []string
+	Width  int
 }
 
 type Song struct {
-	Name     string
 	Artist   string
-	Progress *time.Duration
 	Duration time.Duration
+	Name     string
+	Progress *time.Duration
 }
 
 func InitAppData() *AppData {

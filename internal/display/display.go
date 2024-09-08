@@ -20,13 +20,3 @@ func InitDisplay(w, h int) *Display {
 	}
 	return &display
 }
-
-func (d *Display) WriteString(s string) {
-	d.Buffer.WriteString(s)
-}
-
-func clearScreen() {}
-
-func drawScreen() {
-	clearScreen()
-}
