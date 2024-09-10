@@ -21,6 +21,8 @@ type Controller interface {
 	CurrentPlayingTrack(string) (*SlimCurrentSongData, error)
 	RepeatMode(string, string) error
 	ShuffleMode(string, bool) error
+	GetUserPlaylists(string) ([]SlimPlaylistData, error)
+	GetTracksFromPlaylist(string, string, int) ([]SlimTrackInfo, error)
 }
 
 type SpotifyPlayer struct{}

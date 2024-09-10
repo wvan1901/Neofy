@@ -74,7 +74,7 @@ func AuthorizeUserUrl(clientId string) (string, error) {
 	data.Add("client_id", clientId)
 	data.Add("response_type", "code")
 	data.Add("redirect_uri", redirectUri)
-	data.Add("scope", "user-modify-playback-state user-read-playback-state")
+	data.Add("scope", "user-modify-playback-state user-read-playback-state playlist-read-private")
 	reqUrl := apiUrl + "?" + data.Encode()
 
 	return reqUrl, nil

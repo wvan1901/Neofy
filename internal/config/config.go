@@ -302,3 +302,19 @@ func (m *mockController) ShuffleMode(_ string, b bool) error {
 	m.isShuffled = b
 	return nil
 }
+
+func (m *mockController) GetUserPlaylists(accessToken string) ([]spotify.SlimPlaylistData, error) {
+	mockPlaylists := []spotify.SlimPlaylistData{
+		{Name: "Playlist1", DetailRefUrl: "Ref1", TotalTracks: 11, TracksHref: "t1"},
+		{Name: "P2", DetailRefUrl: "Ref2", TotalTracks: 12, TracksHref: "t2"},
+		{Name: "P3", DetailRefUrl: "Ref3", TotalTracks: 13, TracksHref: "t3"},
+	}
+	return mockPlaylists, nil
+}
+
+func (m *mockController) GetTracksFromPlaylist(string, string, int) ([]spotify.SlimTrackInfo, error) {
+	mockTracks := []spotify.SlimTrackInfo{
+		{Name: "Song1"}, {Name: "Song2"}, {Name: "Song3"}, {Name: "Song4"},
+	}
+	return mockTracks, nil
+}
