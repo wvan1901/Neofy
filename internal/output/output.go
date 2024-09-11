@@ -3,7 +3,6 @@ package output
 import (
 	"fmt"
 	"neofy/internal/config"
-	"strconv"
 	"strings"
 )
 
@@ -16,10 +15,12 @@ func UpdateApp(d *config.AppData) {
 	d.Display.Buffer.WriteString("\033[H")    // Move Cursor to upper right
 
 	// Update App Components
+	updatePlaylistDisplay(&d.Playlist)
+	updateTracksDisplay(&d.Songs)
 	updatePlayerDisplay(&d.Player)
 
 	// Draw everything
-	drawScreen(50, 25, d)
+	drawAppScreen(d)
 
 	d.Display.Buffer.WriteString("\033[?25l") // Moves Cursor
 
@@ -27,9 +28,28 @@ func UpdateApp(d *config.AppData) {
 	d.Display.Buffer.Reset()
 }
 
-func drawScreen(width, height int, d *config.AppData) {
-	d.Display.Buffer.WriteString("Neofy v0.0.0 | " + "w:" + strconv.Itoa(width) + " h:" + strconv.Itoa(height) + "\r\n")
-	printPlayerView(d.Player.Display.Screen, &d.Display.Buffer)
+func drawAppScreen(d *config.AppData) {
+	d.Display.Buffer.WriteString("Neofy v0.0.0\r\n")
+	drawMusicOptions(&d.Playlist, &d.Songs, &d.Display.Buffer) // Playlist & tracks
+	drawPlayer(&d.Player, &d.Display.Buffer)
+
+}
+
+func drawMusicOptions(playlist *config.Playlist, tracks *config.Tracks, buf *strings.Builder) {
+	if playlist.Display.Height != tracks.Display.Height {
+		return
+	}
+	numRows := playlist.Display.Height
+	for i := 0; i < numRows; i++ {
+		rowString := playlist.Display.Screen[i] + "|" + tracks.Display.Screen[i] + "|" + "\r\n"
+		buf.WriteString(rowString)
+	}
+}
+
+func drawPlayer(p *config.MusicPlayer, buf *strings.Builder) {
+	for i := range p.Display.Screen {
+		buf.WriteString(p.Display.Screen[i] + "\r\n")
+	}
 }
 
 func printPlayerView(s []string, buf *strings.Builder) {
@@ -103,4 +123,57 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 			}
 		}
 	}
+}
+
+func updatePlaylistDisplay(playlist *config.Playlist) {
+	// TODO: Handle offet
+	playlist.Display.Screen = []string{}
+	header := fitStringToWidthAndFillRune("--Playlists", '-', playlist.Display.Width)
+	playlist.Display.Screen = append(playlist.Display.Screen, header)
+	for i := 0; i < playlist.Display.Height-2; i++ {
+		rowString := fitStringToWidth("", playlist.Display.Width)
+		if i < len(playlist.Playlists) {
+			rowString = fitStringToWidth(playlist.Playlists[i], playlist.Display.Width)
+		}
+		playlist.Display.Screen = append(playlist.Display.Screen, rowString)
+	}
+	bottom := fillWidthWithRune('-', playlist.Display.Width)
+	playlist.Display.Screen = append(playlist.Display.Screen, bottom)
+}
+
+func updateTracksDisplay(tracks *config.Tracks) {
+	// TODO: Handle offet
+	tracks.Display.Screen = []string{}
+	header := fitStringToWidthAndFillRune("--Tracks", '-', tracks.Display.Width)
+	tracks.Display.Screen = append(tracks.Display.Screen, header)
+	for i := 0; i < tracks.Display.Height-2; i++ {
+		rowString := fitStringToWidth("", tracks.Display.Width)
+		if i < len(tracks.Tracks) {
+			rowString = fitStringToWidth(tracks.Tracks[i], tracks.Display.Width)
+		}
+		tracks.Display.Screen = append(tracks.Display.Screen, rowString)
+	}
+	bottom := fillWidthWithRune('-', tracks.Display.Width)
+	tracks.Display.Screen = append(tracks.Display.Screen, bottom)
+}
+
+// Helper Func to pad or trim string
+func fitStringToWidth(str string, width int) string {
+	if len(str) <= width {
+		numWhiteSpaces := width - len(str)
+		return str + strings.Repeat(" ", numWhiteSpaces)
+	}
+	return str[:width-1]
+}
+
+func fitStringToWidthAndFillRune(str string, r rune, width int) string {
+	if len(str) <= width {
+		numWhiteSpaces := width - len(str)
+		return str + strings.Repeat(string(r), numWhiteSpaces)
+	}
+	return str[:width-1]
+}
+
+func fillWidthWithRune(r rune, width int) string {
+	return strings.Repeat(string(r), width)
 }

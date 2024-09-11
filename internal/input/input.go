@@ -122,6 +122,8 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 		if err != nil {
 			break
 		}
+	case 'w', 'W':
+		panic("Wicho: Panic")
 	}
 }
 

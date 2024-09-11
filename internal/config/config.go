@@ -19,11 +19,17 @@ import (
 
 type AppData struct {
 	Display  display.Display
-	Playlist Display // Not Implemented Yet
+	Playlist Playlist
 	Player   MusicPlayer
-	Songs    Display // Not Implemented Yet
+	Songs    Tracks
 	Spotify  spotify.Config
 	Term     terminal.AppTerm
+}
+
+// TODO: Figure out of I need to set a y offset
+type Playlist struct {
+	Display   Display
+	Playlists []string
 }
 
 type MusicPlayer struct {
@@ -35,6 +41,11 @@ type MusicPlayer struct {
 	Repeat         string  // track, context, off
 	SupportsVolume bool    // Does Device support volume
 	Volume         int     // 0-100
+}
+
+type Tracks struct {
+	Display Display
+	Tracks  []string
 }
 
 type Display struct {
@@ -50,6 +61,7 @@ type Song struct {
 	Progress *time.Duration
 }
 
+// TODO: Populate data into Playlist then tracks
 func InitAppData() *AppData {
 	err := godotenv.Load()
 	if err != nil {
@@ -67,15 +79,21 @@ func InitAppData() *AppData {
 	}
 	newConfig.Display = *display.InitDisplay(w, h)
 	pld := Display{
-		Width:  int(float64(newConfig.Display.Width) * 0.25),
-		Height: int(float64(newConfig.Display.Height) * 0.25),
+		Width:  int(float64(newConfig.Display.Width)*0.25) - 1,
+		Height: int(float64(newConfig.Display.Height)*0.9) - 1,
 	}
-	newConfig.Playlist = pld
+	newConfig.Playlist = Playlist{
+		Display:   pld,
+		Playlists: []string{},
+	}
 	sld := Display{
 		Width:  int(float64(newConfig.Display.Width) * 0.75),
-		Height: int(float64(newConfig.Display.Height) * 0.75),
+		Height: int(float64(newConfig.Display.Height)*0.9) - 1,
 	}
-	newConfig.Songs = sld
+	newConfig.Songs = Tracks{
+		Display: sld,
+		Tracks:  []string{},
+	}
 	mpHeight := int(float64(newConfig.Display.Height) * 0.10)
 	controller := spotify.SpotifyPlayer{}
 	mp := MusicPlayer{
@@ -165,15 +183,21 @@ func InitMock() *AppData {
 	}
 	newConfig.Display = *display.InitDisplay(w, h)
 	pld := Display{
-		Width:  int(float64(newConfig.Display.Width) * 0.25),
-		Height: int(float64(newConfig.Display.Height) * 0.9),
+		Width:  int(float64(newConfig.Display.Width)*0.25) - 1,
+		Height: int(float64(newConfig.Display.Height)*0.9) - 1,
 	}
-	newConfig.Playlist = pld
+	newConfig.Playlist = Playlist{
+		Display:   pld,
+		Playlists: []string{"P1", "P2", "P3", "P4", "P5"},
+	}
 	sld := Display{
-		Width:  int(float64(newConfig.Display.Width) * 0.75),
-		Height: int(float64(newConfig.Display.Height) * 0.9),
+		Width:  int(float64(newConfig.Display.Width)*0.75) - 1,
+		Height: int(float64(newConfig.Display.Height)*0.9) - 1,
 	}
-	newConfig.Songs = sld
+	newConfig.Songs = Tracks{
+		Display: sld,
+		Tracks:  []string{"T1", "T2", "T3", "T4", "T5", "T6", "T7"},
+	}
 	mpHeight := int(float64(newConfig.Display.Height) * 0.10)
 	progressMs := time.Millisecond * 1000 * 7
 	prog := 30000
