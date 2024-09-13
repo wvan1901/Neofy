@@ -28,8 +28,9 @@ type AppData struct {
 
 // TODO: Figure out of I need to set a y offset
 type Playlist struct {
-	Display   Display
-	Playlists []string
+	SelectedPlaylist string
+	Display          Display
+	Playlists        []string
 }
 
 type MusicPlayer struct {
@@ -44,6 +45,7 @@ type MusicPlayer struct {
 }
 
 type Tracks struct {
+	CurSong string
 	Display Display
 	Tracks  []string
 }
@@ -130,6 +132,27 @@ func InitAppData() *AppData {
 		newConfig.Player.CurrentSong.Progress = nil
 	}
 	newConfig.Player.CurrentSong.Duration = time.Duration(playerData.SongDuration * 1000000)
+	newConfig.Songs.CurSong = playerData.SongName
+	userPlaylists, err := controller.GetUserPlaylists(spotifyConfig.UserTokens.AccessToken)
+	if err != nil {
+		panic(fmt.Errorf("InitAppData: %w", err))
+	}
+	playlists := []string{}
+	for _, p := range userPlaylists {
+		playlists = append(playlists, p.Name)
+	}
+	newConfig.Playlist.Playlists = playlists
+	// TODO: Handle if the current playlist is empty
+	curPlaylist, err := controller.GetPlaylist(playerData.PlaylistHref, spotifyConfig.UserTokens.AccessToken)
+	if err != nil {
+		panic(fmt.Errorf("InitAppData: %w", err))
+	}
+	tracks := []string{}
+	for _, t := range curPlaylist.Tracks {
+		tracks = append(tracks, t.Name)
+	}
+	newConfig.Songs.Tracks = tracks
+	newConfig.Playlist.SelectedPlaylist = curPlaylist.PlaylistName
 
 	return &newConfig
 }
@@ -187,8 +210,9 @@ func InitMock() *AppData {
 		Height: int(float64(newConfig.Display.Height)*0.9) - 1,
 	}
 	newConfig.Playlist = Playlist{
-		Display:   pld,
-		Playlists: []string{"P1", "P2", "P3", "P4", "P5"},
+		SelectedPlaylist: "P1",
+		Display:          pld,
+		Playlists:        []string{"P1", "P2", "P3", "P4", "P5"},
 	}
 	sld := Display{
 		Width:  int(float64(newConfig.Display.Width)*0.75) - 1,

@@ -75,6 +75,7 @@ func (SpotifyPlayer) PlaybackState(accessToken string) (*SlimPlayerData, error) 
 		Repeat:         respStruct.RepeatState,
 		SongProgress:   respStruct.ProgressMs,
 		SongDuration:   respStruct.Item.DurationMs,
+		PlaylistHref:   respStruct.Context.Href,
 	}
 
 	return &slimResp, nil
@@ -413,6 +414,7 @@ type SlimPlayerData struct {
 	Repeat         string
 	SongDuration   int
 	SongProgress   *int
+	PlaylistHref   string
 }
 
 type SlimCurrentSongData struct {

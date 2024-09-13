@@ -108,6 +108,70 @@ func (SpotifyPlayer) GetTracksFromPlaylist(hrefUrl, accessToken string, numSongs
 	return tracks, nil
 }
 
+func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWithTracks, error) {
+	err := validTokenFormat(accessToken)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: %w", err)
+	}
+	err = validateUrl(hrefUrl)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: %w", err)
+	}
+	params := url.Values{}
+	params.Add("fields", "name,tracks.items(track(name))")
+	apiUrl := hrefUrl + "?" + params.Encode()
+
+	headerStr := "Bearer " + accessToken
+
+	req, err := http.NewRequest("GET", apiUrl, nil)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: req: %w", err)
+	}
+	req.Header.Add("Authorization", headerStr)
+	c := http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: client: %w", err)
+	}
+	if resp.StatusCode < 200 && resp.StatusCode >= 300 {
+		return nil, errors.New("GetPlaylist: Http status not successful: " + resp.Status)
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: read body: %w", err)
+	}
+
+	var respStruct SlimPlaylistResp
+
+	err = json.Unmarshal(body, &respStruct)
+	if err != nil {
+		return nil, fmt.Errorf("GetPlaylist: json: unmarshal: %w", err)
+	}
+	var tracks []SlimTrackInfo
+	for _, item := range respStruct.Tracks.Items {
+		newTrack := SlimTrackInfo{
+			Name: item.Track.Name,
+		}
+		tracks = append(tracks, newTrack)
+	}
+
+	slimPlaylist := SlimPlaylistWithTracks{
+		PlaylistName: respStruct.Name,
+		Tracks:       tracks,
+	}
+
+	return &slimPlaylist, nil
+}
+
+func validateUrl(url string) error {
+	if url == "" {
+		return errors.New("validateUrl: empty url")
+	}
+	return nil
+}
+
 type SlimPlaylistData struct {
 	Name         string
 	DetailRefUrl string
@@ -117,6 +181,11 @@ type SlimPlaylistData struct {
 
 type SlimTrackInfo struct {
 	Name string
+}
+
+type SlimPlaylistWithTracks struct {
+	PlaylistName string
+	Tracks       []SlimTrackInfo
 }
 
 type UserPlaylistResp struct {
@@ -271,4 +340,15 @@ type SlimTrackResp struct {
 			Name string `json:"name"`
 		} `json:"track"`
 	} `json:"items"`
+}
+
+type SlimPlaylistResp struct {
+	Tracks struct {
+		Items []struct {
+			Track struct {
+				Name string `json:"name"`
+			} `json:"track"`
+		} `json:"items"`
+	} `json:"tracks"`
+	Name string `json:"name"`
 }

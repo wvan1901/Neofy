@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"neofy/internal/config"
 	"strings"
+	"unicode/utf8"
 )
 
 // This is the main draw func
@@ -159,19 +160,21 @@ func updateTracksDisplay(tracks *config.Tracks) {
 
 // Helper Func to pad or trim string
 func fitStringToWidth(str string, width int) string {
-	if len(str) <= width {
-		numWhiteSpaces := width - len(str)
+	lenStr := utf8.RuneCountInString(str)
+	if lenStr <= width {
+		numWhiteSpaces := width - lenStr
 		return str + strings.Repeat(" ", numWhiteSpaces)
 	}
-	return str[:width-1]
+	return str[:width]
 }
 
 func fitStringToWidthAndFillRune(str string, r rune, width int) string {
-	if len(str) <= width {
-		numWhiteSpaces := width - len(str)
+	lenStr := utf8.RuneCountInString(str)
+	if lenStr <= width {
+		numWhiteSpaces := width - lenStr
 		return str + strings.Repeat(string(r), numWhiteSpaces)
 	}
-	return str[:width-1]
+	return str[:width]
 }
 
 func fillWidthWithRune(r rune, width int) string {
