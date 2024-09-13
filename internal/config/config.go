@@ -115,7 +115,7 @@ func InitAppData() *AppData {
 	mp := MusicPlayer{
 		Controller: controller,
 		Display: Display{
-			Width:  newAppDislay.Width,
+			Width:  newAppDislay.Width - 1,
 			Height: mpHeight,
 			Screen: make([]string, mpHeight),
 		},

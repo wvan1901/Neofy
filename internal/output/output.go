@@ -48,8 +48,13 @@ func drawMusicOptions(playlist *config.Playlist, tracks *config.Tracks, buf *str
 }
 
 func drawPlayer(p *config.MusicPlayer, buf *strings.Builder) {
+	if p.Display.Height < 3 {
+		return
+	}
 	for i := range p.Display.Screen {
-		buf.WriteString(p.Display.Screen[i] + "\r\n")
+		rowString := p.Display.Screen[i] + "|\r\n"
+		//rowString := p.Display.Screen[i] + "\r\n"
+		buf.WriteString(rowString)
 	}
 }
 
@@ -63,10 +68,7 @@ func printPlayerView(s []string, buf *strings.Builder) {
 // TODO: If len of row is too long trim it
 func updatePlayerDisplay(mp *config.MusicPlayer) {
 	// If there is no screen then we do nothing
-	s := mp.Display.Screen
-	if len(s) == 0 {
-		return
-	}
+	s := []string{}
 
 	// Prepare visual for player
 	playPause := "|>"
@@ -104,32 +106,39 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 	}
 
 	// Write Visual to display
-	for i := range s {
+	header := fitStringToWidthAndFillRune("--Song", '-', mp.Display.Width)
+	s = append(s, header)
+	for i := 0; i < mp.Display.Height-2; i++ {
+		str := fitStringToWidth("&", mp.Display.Width)
 		switch i {
-		case len(s) / 2:
+		case (mp.Display.Height - 2) / 2:
 			// TODO: Make the player appear in the middle
 			//"x>    |<    ||    >|    [≥]    <|) =====-----"
-			s[i] = shuffled + "    |<    " + playPause + "    >|    " + loop + "    " + volume
+			str = fitStringInMiddle(shuffled+"    |<    "+playPause+"    >|    "+loop+"    "+volume, ' ', mp.Display.Width)
 		case 0:
 			if mp.CurrentSong.Name == "" {
-				s[i] = ""
+				str = fitStringToWidth("", mp.Display.Width)
 			} else {
-				s[i] = "SongPlaying: " + mp.CurrentSong.Name
+				str = fitStringToWidth("Playing: "+mp.CurrentSong.Name, mp.Display.Width)
 			}
-		case len(s) - 1:
+		case mp.Display.Height - 3:
 			if mp.CurrentSong.Artist == "" {
-				s[i] = ""
+				str = fitStringToWidth("", mp.Display.Width)
 			} else {
-				s[i] = "SongArtist: " + mp.CurrentSong.Artist
+				str = fitStringToWidth("Artist: "+mp.CurrentSong.Artist, mp.Display.Width)
 			}
 		}
+		s = append(s, str)
 	}
+	bottom := fillWidthWithRune('-', mp.Display.Width)
+	s = append(s, bottom)
+	mp.Display.Screen = s
 }
 
 func updatePlaylistDisplay(playlist *config.Playlist) {
 	// TODO: Handle offet
 	playlist.Display.Screen = []string{}
-	header := fitStringToWidthAndFillRune("--Playlists", '-', playlist.Display.Width)
+	header := fitStringInMiddle("Playlists", '-', playlist.Display.Width)
 	playlist.Display.Screen = append(playlist.Display.Screen, header)
 	for i := 0; i < playlist.Display.Height-2; i++ {
 		rowString := fitStringToWidth("", playlist.Display.Width)
@@ -145,7 +154,7 @@ func updatePlaylistDisplay(playlist *config.Playlist) {
 func updateTracksDisplay(tracks *config.Tracks) {
 	// TODO: Handle offet
 	tracks.Display.Screen = []string{}
-	header := fitStringToWidthAndFillRune("--Tracks", '-', tracks.Display.Width)
+	header := fitStringInMiddle("Tracks", '-', tracks.Display.Width)
 	tracks.Display.Screen = append(tracks.Display.Screen, header)
 	for i := 0; i < tracks.Display.Height-2; i++ {
 		rowString := fitStringToWidth("", tracks.Display.Width)
@@ -179,4 +188,17 @@ func fitStringToWidthAndFillRune(str string, r rune, width int) string {
 
 func fillWidthWithRune(r rune, width int) string {
 	return strings.Repeat(string(r), width)
+}
+
+func fitStringInMiddle(str string, pad rune, width int) string {
+	lenStr := utf8.RuneCountInString(str)
+	if lenStr > width {
+		return str[:width]
+	}
+	padSpace := width - lenStr
+	leftPadLen := padSpace - padSpace/2
+	rightPadLen := padSpace - leftPadLen
+	leftPad := strings.Repeat(string(pad), leftPadLen)
+	rightPad := strings.Repeat(string(pad), rightPadLen)
+	return leftPad + str + rightPad
 }

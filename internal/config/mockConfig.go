@@ -27,7 +27,7 @@ func InitMock() *AppData {
 	prog := 30000
 	mp := MusicPlayer{
 		Display: Display{
-			Width:  newDisplay.Width,
+			Width:  newDisplay.Width - 2,
 			Height: mpHeight,
 			Screen: make([]string, mpHeight),
 		},
