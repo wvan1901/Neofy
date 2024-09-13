@@ -134,3 +134,10 @@ func Openbrowser(url string) error {
 	}
 	return nil
 }
+
+// TODO: Handle different environments
+func InitAppTerm() AppTerm {
+	newTerm := LinuxTerm{}
+	newTerm.InitTerminal()
+	return &newTerm
+}
