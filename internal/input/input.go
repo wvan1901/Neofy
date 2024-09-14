@@ -3,14 +3,14 @@ package input
 import (
 	"errors"
 	"fmt"
-	"neofy/internal/config"
 	"neofy/internal/consts"
+	"neofy/internal/data"
 	"neofy/internal/terminal"
 	"time"
 )
 
 // TODO: Find a process to handle errors
-func ProcessInput(d *config.AppData) {
+func ProcessInput(d *data.AppData) {
 	// TODO: Find a way to remove timer, play & pause use it
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
@@ -125,7 +125,7 @@ func ProcessInput(d *config.AppData) {
 	}
 }
 
-func RefreshPlayer(accessToken string, mp *config.MusicPlayer) error {
+func RefreshPlayer(accessToken string, mp *data.MusicPlayer) error {
 	if mp == nil {
 		return errors.New("refreshPlayer: mp is nil")
 	}

@@ -2,13 +2,13 @@ package output
 
 import (
 	"fmt"
-	"neofy/internal/config"
+	"neofy/internal/data"
 	"strings"
 	"unicode/utf8"
 )
 
 // This is the main draw func
-func UpdateApp(d *config.AppData) {
+func UpdateApp(d *data.AppData) {
 	d.Display.Buffer.WriteString("\033[2J") // Clears entire screen
 	//d.Display.Buffer.WriteString("\033[K") // Clears entire Line
 	// Clears Screen
@@ -29,14 +29,14 @@ func UpdateApp(d *config.AppData) {
 	d.Display.Buffer.Reset()
 }
 
-func drawAppScreen(d *config.AppData) {
+func drawAppScreen(d *data.AppData) {
 	d.Display.Buffer.WriteString("Neofy v0.0.0\r\n")
 	drawMusicOptions(&d.Playlist, &d.Songs, &d.Display.Buffer) // Playlist & tracks
 	drawPlayer(&d.Player, &d.Display.Buffer)
 
 }
 
-func drawMusicOptions(playlist *config.Playlist, tracks *config.Tracks, buf *strings.Builder) {
+func drawMusicOptions(playlist *data.Playlist, tracks *data.Tracks, buf *strings.Builder) {
 	if playlist.Display.Height != tracks.Display.Height {
 		return
 	}
@@ -47,7 +47,7 @@ func drawMusicOptions(playlist *config.Playlist, tracks *config.Tracks, buf *str
 	}
 }
 
-func drawPlayer(p *config.MusicPlayer, buf *strings.Builder) {
+func drawPlayer(p *data.MusicPlayer, buf *strings.Builder) {
 	if p.Display.Height < 3 {
 		return
 	}
@@ -66,7 +66,7 @@ func printPlayerView(s []string, buf *strings.Builder) {
 }
 
 // TODO: If len of row is too long trim it
-func updatePlayerDisplay(mp *config.MusicPlayer) {
+func updatePlayerDisplay(mp *data.MusicPlayer) {
 	// If there is no screen then we do nothing
 	s := []string{}
 
@@ -135,7 +135,7 @@ func updatePlayerDisplay(mp *config.MusicPlayer) {
 	mp.Display.Screen = s
 }
 
-func updatePlaylistDisplay(playlist *config.Playlist) {
+func updatePlaylistDisplay(playlist *data.Playlist) {
 	// TODO: Handle offet
 	playlist.Display.Screen = []string{}
 	header := fitStringInMiddle("Playlists", '-', playlist.Display.Width)
@@ -151,7 +151,7 @@ func updatePlaylistDisplay(playlist *config.Playlist) {
 	playlist.Display.Screen = append(playlist.Display.Screen, bottom)
 }
 
-func updateTracksDisplay(tracks *config.Tracks) {
+func updateTracksDisplay(tracks *data.Tracks) {
 	// TODO: Handle offet
 	tracks.Display.Screen = []string{}
 	header := fitStringInMiddle("Tracks", '-', tracks.Display.Width)

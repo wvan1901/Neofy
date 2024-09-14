@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand/v2"
+	"neofy/internal/data"
 	"neofy/internal/display"
 	"neofy/internal/scheduler"
 	"neofy/internal/spotify"
@@ -13,7 +14,7 @@ import (
 )
 
 // Below is a mock config
-func InitMock() *AppData {
+func InitMock() *data.AppData {
 
 	newTerm := terminal.InitAppTerm()
 
@@ -25,8 +26,8 @@ func InitMock() *AppData {
 	mpHeight := int(float64(newDisplay.Height) * 0.10)
 	progressMs := time.Millisecond * 1000 * 7
 	prog := 30000
-	mp := MusicPlayer{
-		Display: Display{
+	mp := data.MusicPlayer{
+		Display: data.Display{
 			Width:  newDisplay.Width - 2,
 			Height: mpHeight,
 			Screen: make([]string, mpHeight),
@@ -36,7 +37,7 @@ func InitMock() *AppData {
 		SupportsVolume: true,
 		Volume:         77,
 		Repeat:         "NONE",
-		CurrentSong: Song{
+		CurrentSong: data.Song{
 			Name:     "505",
 			Artist:   "Artic Monkeys",
 			Duration: time.Millisecond * 1000 * 60,
@@ -53,22 +54,22 @@ func InitMock() *AppData {
 			progress:   &prog,
 		},
 	}
-	newPlaylist := Playlist{
+	newPlaylist := data.Playlist{
 		SelectedPlaylist: "P1",
-		Display: Display{
+		Display: data.Display{
 			Width:  int(float64(newDisplay.Width)*0.25) - 1,
 			Height: int(float64(newDisplay.Height)*0.9) - 1,
 		},
 		Playlists: []string{"P1", "P2", "P3", "P4", "P5"},
 	}
-	newSongs := Tracks{
-		Display: Display{
+	newSongs := data.Tracks{
+		Display: data.Display{
 			Width:  int(float64(newDisplay.Width)*0.75) - 1,
 			Height: int(float64(newDisplay.Height)*0.9) - 1,
 		},
 		Tracks: []string{"T1", "T2", "T3", "T4", "T5", "T6", "T7"},
 	}
-	newConfig := AppData{
+	newConfig := data.AppData{
 		Display:  newDisplay,
 		Playlist: newPlaylist,
 		Player:   mp,

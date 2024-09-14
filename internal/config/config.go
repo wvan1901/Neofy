@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"neofy/internal/data"
 	"neofy/internal/display"
 	"neofy/internal/spotify"
 	"neofy/internal/terminal"
@@ -10,63 +11,7 @@ import (
 	"time"
 )
 
-// TODO: Abstract Spotify & Music Player into a interface
-
-// TODO: Add modes: Playlists, Tracks, Player
-type AppData struct {
-	Display  display.Display
-	Mode     Mode
-	Playlist Playlist
-	Player   MusicPlayer
-	Songs    Tracks
-	Spotify  spotify.Config
-	Term     terminal.AppTerm
-}
-
-// TODO: Figure out a y offset
-type Playlist struct {
-	SelectedPlaylist string
-	Display          Display
-	Playlists        []string
-}
-
-type MusicPlayer struct {
-	Controller     spotify.Controller
-	CurrentSong    Song
-	Display        Display // What to show in cli
-	IsPlaying      bool    // Is something playing
-	IsShuffled     bool    // Is playlist suffled
-	Repeat         string  // track, context, off
-	SupportsVolume bool    // Does Device support volume
-	Volume         int     // 0-100
-}
-
-type Tracks struct {
-	CurSong string
-	Display Display
-	Tracks  []string
-}
-
-type Display struct {
-	Height int
-	Screen []string
-	Width  int
-}
-
-type Song struct {
-	Artist   string
-	Duration time.Duration
-	Name     string
-	Progress *time.Duration
-}
-
-type Mode interface {
-	// TODO: How do we handle the timer?
-	ProcessInput(*AppData)
-	ShortDisplay() rune
-}
-
-func InitAppData() *AppData {
+func InitAppData() *data.AppData {
 	newTerm := terminal.InitAppTerm()
 
 	w, h, err := newTerm.GetTerminalSize()
@@ -110,8 +55,8 @@ func InitAppData() *AppData {
 	for _, t := range curPlaylist.Tracks {
 		tracks = append(tracks, t.Name)
 	}
-	newPlaylist := Playlist{
-		Display: Display{
+	newPlaylist := data.Playlist{
+		Display: data.Display{
 			Width:  int(float64(newAppDislay.Width)*0.25) - 1,
 			Height: int(float64(newAppDislay.Height)*0.9) - 1,
 		},
@@ -120,9 +65,9 @@ func InitAppData() *AppData {
 	}
 
 	mpHeight := int(float64(newAppDislay.Height) * 0.10)
-	mp := MusicPlayer{
+	mp := data.MusicPlayer{
 		Controller: controller,
-		Display: Display{
+		Display: data.Display{
 			Width:  newAppDislay.Width - 1,
 			Height: mpHeight,
 			Screen: make([]string, mpHeight),
@@ -130,7 +75,7 @@ func InitAppData() *AppData {
 		IsPlaying:      playerData.IsPlaying,
 		SupportsVolume: playerData.SupportsVolume,
 		IsShuffled:     playerData.IsShuffled,
-		CurrentSong: Song{
+		CurrentSong: data.Song{
 			Name:     playerData.SongName,
 			Artist:   playerData.Artist,
 			Progress: curSongProgress,
@@ -140,16 +85,16 @@ func InitAppData() *AppData {
 		Volume: playerData.Volume,
 	}
 
-	newSongs := Tracks{
+	newSongs := data.Tracks{
 		CurSong: playerData.SongName,
-		Display: Display{
+		Display: data.Display{
 			Width:  int(float64(newAppDislay.Width) * 0.75),
 			Height: int(float64(newAppDislay.Height)*0.9) - 1,
 		},
 		Tracks: tracks,
 	}
 
-	newConfig := AppData{
+	newConfig := data.AppData{
 		Display:  newAppDislay,
 		Playlist: newPlaylist,
 		Player:   mp,
