@@ -20,7 +20,8 @@ func InitAppData() *data.AppData {
 		panic(fmt.Errorf("InitAppData: %w", err))
 	}
 
-	newAppDislay := *display.InitDisplay(w, h)
+	// TODO: Figure out how to handle runes with width 2 in terminal
+	newAppDislay := *display.InitDisplay(w-3, h)
 
 	controller := spotify.SpotifyPlayer{}
 	spotifyConfig, err := initSpotifyConfig()
