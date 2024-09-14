@@ -6,12 +6,12 @@ import (
 	"neofy/internal/config"
 	"neofy/internal/consts"
 	"neofy/internal/terminal"
-	"neofy/internal/timer"
 	"time"
 )
 
 // TODO: Find a process to handle errors
-func ProcessInput(d *config.AppData, t *timer.Updater) {
+func ProcessInput(d *config.AppData) {
+	// TODO: Find a way to remove timer, play & pause use it
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
 	case consts.CONTROLCASCII:
@@ -44,7 +44,6 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 			break
 		}
 		d.Player.IsPlaying = true
-		go t.Resume()
 	case 'x', 'X':
 		// Pause Song
 		if !d.Player.IsPlaying {
@@ -55,7 +54,6 @@ func ProcessInput(d *config.AppData, t *timer.Updater) {
 			break
 		}
 		d.Player.IsPlaying = false
-		go t.Pause()
 	case 'n', 'N':
 		// Skip Song
 		err := d.Player.Controller.SkipToNext(d.Spotify.UserTokens.AccessToken)
