@@ -2,7 +2,6 @@ package internal
 
 import (
 	"neofy/internal/config"
-	"neofy/internal/input"
 	"neofy/internal/output"
 )
 
@@ -13,6 +12,6 @@ func RunApp() error {
 	go d.Spotify.RefreshSchedular.Start()
 	for {
 		output.UpdateApp(d)
-		input.ProcessInput(d)
+		d.Mode.ProcessInput(d)
 	}
 }

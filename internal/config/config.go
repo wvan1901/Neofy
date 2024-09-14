@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"neofy/internal/data"
 	"neofy/internal/display"
+	"neofy/internal/mode"
 	"neofy/internal/spotify"
 	"neofy/internal/terminal"
 	"os"
@@ -96,6 +97,7 @@ func InitAppData() *data.AppData {
 
 	newConfig := data.AppData{
 		Display:  newAppDislay,
+		Mode:     &mode.Player{},
 		Playlist: newPlaylist,
 		Player:   mp,
 		Songs:    newSongs,

@@ -9,7 +9,6 @@ import (
 
 // TODO: Abstract Spotify & Music Player into a interface
 
-// TODO: Add modes: Playlists, Tracks, Player
 type AppData struct {
 	Display  display.Display
 	Mode     Mode
@@ -58,7 +57,6 @@ type Song struct {
 }
 
 type Mode interface {
-	// TODO: How do we handle the timer?
-	ProcessInput(*AppData) // Needs Terminal, Player, Spotify
+	ProcessInput(*AppData)
 	ShortDisplay() rune
 }

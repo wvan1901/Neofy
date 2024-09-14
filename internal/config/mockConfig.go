@@ -6,6 +6,7 @@ import (
 	"math/rand/v2"
 	"neofy/internal/data"
 	"neofy/internal/display"
+	"neofy/internal/mode"
 	"neofy/internal/scheduler"
 	"neofy/internal/spotify"
 	"neofy/internal/terminal"
@@ -71,6 +72,7 @@ func InitMock() *data.AppData {
 	}
 	newConfig := data.AppData{
 		Display:  newDisplay,
+		Mode:     &mode.Player{},
 		Playlist: newPlaylist,
 		Player:   mp,
 		Songs:    newSongs,

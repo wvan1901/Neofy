@@ -30,7 +30,7 @@ func UpdateApp(d *data.AppData) {
 }
 
 func drawAppScreen(d *data.AppData) {
-	d.Display.Buffer.WriteString("Neofy v0.0.0\r\n")
+	d.Display.Buffer.WriteString("Neofy v0.0.0: " + string(d.Mode.ShortDisplay()) + "\r\n")
 	drawMusicOptions(&d.Playlist, &d.Songs, &d.Display.Buffer) // Playlist & tracks
 	drawPlayer(&d.Player, &d.Display.Buffer)
 

@@ -1,4 +1,4 @@
-package input
+package mode
 
 import (
 	"errors"
@@ -9,14 +9,19 @@ import (
 	"time"
 )
 
-// TODO: Find a process to handle errors
-func ProcessInput(d *data.AppData) {
+type Player struct{}
+
+func (*Player) ProcessInput(d *data.AppData) {
 	// TODO: Find a way to remove timer, play & pause use it
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
 	case consts.CONTROLCASCII:
 		terminal.Quit(d.Term)
 		break
+	case 'u', 'U':
+		d.Mode = &Playlist{}
+	case 't', 'T':
+		// TODO: Switch mode to tracks
 	case 's', 'S':
 		// Shuffle:
 		err := d.Player.Controller.ShuffleMode(d.Spotify.UserTokens.AccessToken, !d.Player.IsShuffled)
@@ -30,7 +35,7 @@ func ProcessInput(d *data.AppData) {
 		if err != nil {
 			break
 		}
-		err = RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
@@ -60,7 +65,7 @@ func ProcessInput(d *data.AppData) {
 		if err != nil {
 			break
 		}
-		err = RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err = refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
@@ -116,7 +121,7 @@ func ProcessInput(d *data.AppData) {
 		d.Player.Volume = newVol
 	case 'f', 'F':
 		// Refresh the current song
-		err := RefreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
+		err := refreshPlayer(d.Spotify.UserTokens.AccessToken, &d.Player)
 		if err != nil {
 			break
 		}
@@ -125,7 +130,11 @@ func ProcessInput(d *data.AppData) {
 	}
 }
 
-func RefreshPlayer(accessToken string, mp *data.MusicPlayer) error {
+func (*Player) ShortDisplay() rune {
+	return 'P'
+}
+
+func refreshPlayer(accessToken string, mp *data.MusicPlayer) error {
 	if mp == nil {
 		return errors.New("refreshPlayer: mp is nil")
 	}
