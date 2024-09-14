@@ -10,7 +10,6 @@ type Playlist struct{}
 
 // TODO: Implement cursor
 func (*Playlist) ProcessInput(d *data.AppData) {
-	// TODO: Find a way to remove timer, play & pause use it
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
 	case consts.CONTROLCASCII, consts.ESC:

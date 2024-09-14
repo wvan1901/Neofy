@@ -12,7 +12,6 @@ import (
 type Player struct{}
 
 func (*Player) ProcessInput(d *data.AppData) {
-	// TODO: Find a way to remove timer, play & pause use it
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
 	case consts.CONTROLCASCII:
@@ -21,7 +20,7 @@ func (*Player) ProcessInput(d *data.AppData) {
 	case 'u', 'U':
 		d.Mode = &Playlist{}
 	case 't', 'T':
-		// TODO: Switch mode to tracks
+		d.Mode = &Track{}
 	case 's', 'S':
 		// Shuffle:
 		err := d.Player.Controller.ShuffleMode(d.Spotify.UserTokens.AccessToken, !d.Player.IsShuffled)

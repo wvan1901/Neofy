@@ -65,7 +65,6 @@ func printPlayerView(s []string, buf *strings.Builder) {
 	}
 }
 
-// TODO: If len of row is too long trim it
 func updatePlayerDisplay(mp *data.MusicPlayer) {
 	// If there is no screen then we do nothing
 	s := []string{}
@@ -112,7 +111,6 @@ func updatePlayerDisplay(mp *data.MusicPlayer) {
 		str := fitStringToWidth("&", mp.Display.Width)
 		switch i {
 		case (mp.Display.Height - 2) / 2:
-			// TODO: Make the player appear in the middle
 			//"x>    |<    ||    >|    [≥]    <|) =====-----"
 			str = fitStringInMiddle(shuffled+"    |<    "+playPause+"    >|    "+loop+"    "+volume, ' ', mp.Display.Width)
 		case 0:
