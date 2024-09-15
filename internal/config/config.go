@@ -44,9 +44,14 @@ func InitAppData() *data.AppData {
 	if err != nil {
 		panic(fmt.Errorf("InitAppData: %w", err))
 	}
-	playlists := []string{}
+	playlists := []data.PlaylistDetail{}
 	for _, p := range userPlaylists {
-		playlists = append(playlists, p.Name)
+		newP := data.PlaylistDetail{
+			Href:     p.TracksHref,
+			Name:     p.Name,
+			NumSongs: p.TotalTracks,
+		}
+		playlists = append(playlists, newP)
 	}
 	// TODO: Handle if the current playlist is empty
 	curPlaylist, err := controller.GetPlaylist(playerData.PlaylistHref, spotifyConfig.UserTokens.AccessToken)
@@ -57,13 +62,16 @@ func InitAppData() *data.AppData {
 	for _, t := range curPlaylist.Tracks {
 		tracks = append(tracks, t.Name)
 	}
+	curPlaylistDetail, posY := findSelectedPlaylist(playlists, curPlaylist.PlaylistName)
 	newPlaylist := data.Playlist{
+		CursorPosY: posY,
+		RowOffset:  0,
 		Display: data.Display{
 			Width:  int(float64(newAppDislay.Width)*0.25) - 1,
 			Height: int(float64(newAppDislay.Height)*0.9) - 1,
 		},
 		Playlists:        playlists,
-		SelectedPlaylist: curPlaylist.PlaylistName,
+		SelectedPlaylist: curPlaylistDetail,
 	}
 
 	mpHeight := int(float64(newAppDislay.Height) * 0.10)
@@ -138,4 +146,13 @@ func initSpotifyConfig() (*spotify.Config, error) {
 	c.RefreshSchedular = *tokenScheduler
 
 	return &c, nil
+}
+
+func findSelectedPlaylist(list []data.PlaylistDetail, playlistName string) (*data.PlaylistDetail, int) {
+	for i, p := range list {
+		if p.Name == playlistName {
+			return &p, i
+		}
+	}
+	return nil, -1
 }

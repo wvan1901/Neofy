@@ -135,13 +135,22 @@ func updatePlayerDisplay(mp *data.MusicPlayer) {
 
 func updatePlaylistDisplay(playlist *data.Playlist) {
 	// TODO: Handle offet
+	if playlist.RowOffset < 0 {
+		playlist.RowOffset = 0
+	}
 	playlist.Display.Screen = []string{}
 	header := fitStringInMiddle("Playlists", '-', playlist.Display.Width)
 	playlist.Display.Screen = append(playlist.Display.Screen, header)
 	for i := 0; i < playlist.Display.Height-2; i++ {
+		playlistIndex := i + playlist.RowOffset
 		rowString := fitStringToWidth("", playlist.Display.Width)
-		if i < len(playlist.Playlists) {
-			rowString = fitStringToWidth(playlist.Playlists[i], playlist.Display.Width)
+		if playlistIndex < len(playlist.Playlists) {
+			rowString = fitStringToWidth(playlist.Playlists[playlistIndex].Name, playlist.Display.Width)
+			if playlist.SelectedPlaylist != nil && (playlist.Playlists[playlistIndex].Name == playlist.SelectedPlaylist.Name) {
+				rowString = "\033[44m" + rowString + "\033[49m"
+			} else if playlistIndex == playlist.CursorPosY {
+				rowString = "\033[100m" + rowString + "\033[49m"
+			}
 		}
 		playlist.Display.Screen = append(playlist.Display.Screen, rowString)
 	}

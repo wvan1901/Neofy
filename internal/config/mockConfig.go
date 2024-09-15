@@ -55,13 +55,18 @@ func InitMock() *data.AppData {
 			progress:   &prog,
 		},
 	}
+	playlists := []data.PlaylistDetail{{Name: "P1"}, {Name: "P2"}, {Name: "P3"}, {Name: "P4"}, {Name: "P5"}}
+	posY := 0
+	curPlaylist := playlists[posY]
 	newPlaylist := data.Playlist{
-		SelectedPlaylist: "P1",
+		CursorPosY:       posY,
+		RowOffset:        0,
+		SelectedPlaylist: &curPlaylist,
 		Display: data.Display{
 			Width:  int(float64(newDisplay.Width)*0.25) - 1,
 			Height: int(float64(newDisplay.Height)*0.9) - 1,
 		},
-		Playlists: []string{"P1", "P2", "P3", "P4", "P5"},
+		Playlists: playlists,
 	}
 	newSongs := data.Tracks{
 		Display: data.Display{
@@ -180,8 +185,10 @@ func (m *mockController) GetUserPlaylists(accessToken string) ([]spotify.SlimPla
 }
 
 func (m *mockController) GetTracksFromPlaylist(string, string, int) ([]spotify.SlimTrackInfo, error) {
-	mockTracks := []spotify.SlimTrackInfo{
-		{Name: "Song1"}, {Name: "Song2"}, {Name: "Song3"}, {Name: "Song4"},
+	randLen := rand.IntN(10) + 1
+	mocks := []spotify.SlimTrackInfo{}
+	for i := 1; i <= randLen; i++ {
+		mocks = append(mocks, spotify.SlimTrackInfo{Name: "Song" + strconv.Itoa(i)})
 	}
-	return mockTracks, nil
+	return mocks, nil
 }

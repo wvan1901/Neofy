@@ -21,9 +21,17 @@ type AppData struct {
 
 // TODO: Figure out a y offset
 type Playlist struct {
-	SelectedPlaylist string
+	CursorPosY       int
 	Display          Display
-	Playlists        []string
+	Playlists        []PlaylistDetail
+	RowOffset        int
+	SelectedPlaylist *PlaylistDetail
+}
+
+type PlaylistDetail struct {
+	Href     string
+	Name     string
+	NumSongs int
 }
 
 type MusicPlayer struct {
