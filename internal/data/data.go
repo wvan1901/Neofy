@@ -19,13 +19,12 @@ type AppData struct {
 	Term     terminal.AppTerm
 }
 
-// TODO: Figure out a y offset
 type Playlist struct {
 	CursorPosY       int
 	Display          Display
 	Playlists        []PlaylistDetail
 	RowOffset        int
-	SelectedPlaylist *PlaylistDetail
+	SelectedPlaylist *PlaylistDetail //Display only
 }
 
 type PlaylistDetail struct {
@@ -46,9 +45,15 @@ type MusicPlayer struct {
 }
 
 type Tracks struct {
-	CurSong string
-	Display Display
-	Tracks  []string
+	CursorPosY    int
+	Display       Display
+	RowOffset     int
+	SelectedTrack *TrackDetail
+	Tracks        []TrackDetail
+}
+
+type TrackDetail struct {
+	Name string
 }
 
 type Display struct {

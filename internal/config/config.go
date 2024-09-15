@@ -58,9 +58,9 @@ func InitAppData() *data.AppData {
 	if err != nil {
 		panic(fmt.Errorf("InitAppData: %w", err))
 	}
-	tracks := []string{}
+	tracks := []data.TrackDetail{}
 	for _, t := range curPlaylist.Tracks {
-		tracks = append(tracks, t.Name)
+		tracks = append(tracks, data.TrackDetail{Name: t.Name})
 	}
 	curPlaylistDetail, posY := findSelectedPlaylist(playlists, curPlaylist.PlaylistName)
 	newPlaylist := data.Playlist{
@@ -96,12 +96,12 @@ func InitAppData() *data.AppData {
 	}
 
 	newSongs := data.Tracks{
-		CurSong: playerData.SongName,
 		Display: data.Display{
 			Width:  int(float64(newAppDislay.Width) * 0.75),
 			Height: int(float64(newAppDislay.Height)*0.9) - 1,
 		},
-		Tracks: tracks,
+		SelectedTrack: &data.TrackDetail{Name: playerData.SongName},
+		Tracks:        tracks,
 	}
 
 	newConfig := data.AppData{

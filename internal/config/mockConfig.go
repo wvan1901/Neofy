@@ -73,7 +73,8 @@ func InitMock() *data.AppData {
 			Width:  int(float64(newDisplay.Width)*0.75) - 1,
 			Height: int(float64(newDisplay.Height)*0.9) - 1,
 		},
-		Tracks: []string{"T1", "T2", "T3", "T4", "T5", "T6", "T7"},
+		Tracks:    []data.TrackDetail{{Name: "T1"}, {Name: "T2"}, {Name: "T3"}},
+		RowOffset: 0,
 	}
 	newConfig := data.AppData{
 		Display:  newDisplay,

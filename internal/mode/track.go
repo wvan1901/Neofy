@@ -8,7 +8,6 @@ import (
 
 type Track struct{}
 
-// TODO: Implement cursor
 func (*Track) ProcessInput(d *data.AppData) {
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
@@ -17,6 +16,27 @@ func (*Track) ProcessInput(d *data.AppData) {
 		break
 	case 'u', 'U':
 		d.Mode = &Playlist{}
+	case 'j', 'J':
+		if d.Songs.CursorPosY < 0 {
+			break
+		} else if d.Songs.CursorPosY+1 >= len(d.Songs.Tracks) {
+			break
+		}
+		d.Songs.CursorPosY++
+	case 'k', 'K':
+		if d.Songs.CursorPosY < 0 {
+			break
+		} else if d.Songs.CursorPosY-1 < 0 {
+			break
+		}
+		d.Songs.CursorPosY--
+	case 's', 'S':
+		if d.Songs.CursorPosY < 0 {
+			break
+		}
+		// TODO: Make an api call to play that song
+		d.Songs.SelectedTrack = &d.Songs.Tracks[d.Songs.CursorPosY]
+
 	}
 }
 

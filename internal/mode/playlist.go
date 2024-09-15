@@ -8,7 +8,6 @@ import (
 
 type Playlist struct{}
 
-// TODO: Implement cursor
 func (*Playlist) ProcessInput(d *data.AppData) {
 	keyReadRune := terminal.ReadInputKey()
 	switch keyReadRune {
@@ -43,12 +42,14 @@ func (*Playlist) ProcessInput(d *data.AppData) {
 		if err != nil {
 			break
 		}
-		newTracks := []string{}
+		newTracks := []data.TrackDetail{}
 		for _, track := range tracksResp {
-			newTracks = append(newTracks, track.Name)
+			newTracks = append(newTracks, data.TrackDetail{Name: track.Name})
 		}
 		d.Playlist.SelectedPlaylist = &curPlaylist
 		d.Songs.Tracks = newTracks
+		d.Songs.CursorPosY = 0
+		d.Songs.SelectedTrack = nil
 	}
 }
 
