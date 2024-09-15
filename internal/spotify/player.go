@@ -23,6 +23,7 @@ type Controller interface {
 	ShuffleMode(string, bool) error
 	GetUserPlaylists(string) ([]SlimPlaylistData, error)
 	GetTracksFromPlaylist(string, string, int) ([]SlimTrackInfo, error)
+	StartTrack(string, string, int) error
 }
 
 type SpotifyPlayer struct{}

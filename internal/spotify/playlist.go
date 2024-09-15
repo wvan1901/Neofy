@@ -52,6 +52,7 @@ func (SpotifyPlayer) GetUserPlaylists(accessToken string) ([]SlimPlaylistData, e
 			DetailRefUrl: item.Href,
 			TotalTracks:  item.Tracks.Total,
 			TracksHref:   item.Tracks.Href,
+			ContextUri:   item.URI,
 		}
 		userPlaylistResp = append(userPlaylistResp, newSlim)
 	}
@@ -65,7 +66,7 @@ func (SpotifyPlayer) GetTracksFromPlaylist(hrefUrl, accessToken string, numSongs
 	}
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(numSongs))
-	params.Add("fields", "items(track(name))")
+	params.Add("fields", "items(track(name, uri))")
 	apiUrl := hrefUrl + "?" + params.Encode()
 
 	headerStr := "Bearer " + accessToken
@@ -100,7 +101,8 @@ func (SpotifyPlayer) GetTracksFromPlaylist(hrefUrl, accessToken string, numSongs
 	var tracks []SlimTrackInfo
 	for _, item := range respStruct.Items {
 		newTrack := SlimTrackInfo{
-			Name: item.Track.Name,
+			Name:       item.Track.Name,
+			ContextUri: item.Track.Uri,
 		}
 		tracks = append(tracks, newTrack)
 	}
@@ -118,7 +120,7 @@ func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWith
 		return nil, fmt.Errorf("GetPlaylist: %w", err)
 	}
 	params := url.Values{}
-	params.Add("fields", "name,tracks.items(track(name))")
+	params.Add("fields", "name,uri,tracks.items(track(name,uri))")
 	apiUrl := hrefUrl + "?" + params.Encode()
 
 	headerStr := "Bearer " + accessToken
@@ -152,7 +154,8 @@ func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWith
 	var tracks []SlimTrackInfo
 	for _, item := range respStruct.Tracks.Items {
 		newTrack := SlimTrackInfo{
-			Name: item.Track.Name,
+			Name:       item.Track.Name,
+			ContextUri: item.Track.Uri,
 		}
 		tracks = append(tracks, newTrack)
 	}
@@ -160,6 +163,7 @@ func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWith
 	slimPlaylist := SlimPlaylistWithTracks{
 		PlaylistName: respStruct.Name,
 		Tracks:       tracks,
+		ContextUri:   respStruct.Uri,
 	}
 
 	return &slimPlaylist, nil
@@ -177,15 +181,18 @@ type SlimPlaylistData struct {
 	DetailRefUrl string
 	TotalTracks  int
 	TracksHref   string
+	ContextUri   string
 }
 
 type SlimTrackInfo struct {
-	Name string
+	Name       string
+	ContextUri string
 }
 
 type SlimPlaylistWithTracks struct {
 	PlaylistName string
 	Tracks       []SlimTrackInfo
+	ContextUri   string
 }
 
 type UserPlaylistResp struct {
@@ -338,6 +345,7 @@ type SlimTrackResp struct {
 	Items []struct {
 		Track struct {
 			Name string `json:"name"`
+			Uri  string `json:"uri"`
 		} `json:"track"`
 	} `json:"items"`
 }
@@ -347,8 +355,10 @@ type SlimPlaylistResp struct {
 		Items []struct {
 			Track struct {
 				Name string `json:"name"`
+				Uri  string `json:"uri"`
 			} `json:"track"`
 		} `json:"items"`
 	} `json:"tracks"`
 	Name string `json:"name"`
+	Uri  string `json:"uri"`
 }

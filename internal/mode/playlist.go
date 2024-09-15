@@ -44,7 +44,7 @@ func (*Playlist) ProcessInput(d *data.AppData) {
 		}
 		newTracks := []data.TrackDetail{}
 		for _, track := range tracksResp {
-			newTracks = append(newTracks, data.TrackDetail{Name: track.Name})
+			newTracks = append(newTracks, data.TrackDetail{Name: track.Name, ContextUri: track.ContextUri})
 		}
 		d.Playlist.SelectedPlaylist = &curPlaylist
 		d.Songs.Tracks = newTracks

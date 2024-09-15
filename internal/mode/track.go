@@ -34,9 +34,14 @@ func (*Track) ProcessInput(d *data.AppData) {
 		if d.Songs.CursorPosY < 0 {
 			break
 		}
-		// TODO: Make an api call to play that song
-		d.Songs.SelectedTrack = &d.Songs.Tracks[d.Songs.CursorPosY]
-
+		newTrack := d.Songs.Tracks[d.Songs.CursorPosY]
+		err := d.Player.Controller.StartTrack(d.Playlist.SelectedPlaylist.ContextUri, d.Spotify.UserTokens.AccessToken, d.Songs.CursorPosY)
+		if err != nil {
+			break
+		}
+		d.Songs.SelectedTrack = &newTrack
+		// TODO: Handle updating player state
+		d.Player.CurrentSong.Name = newTrack.Name
 	}
 }
 

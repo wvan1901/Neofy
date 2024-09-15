@@ -47,9 +47,10 @@ func InitAppData() *data.AppData {
 	playlists := []data.PlaylistDetail{}
 	for _, p := range userPlaylists {
 		newP := data.PlaylistDetail{
-			Href:     p.TracksHref,
-			Name:     p.Name,
-			NumSongs: p.TotalTracks,
+			Href:       p.TracksHref,
+			Name:       p.Name,
+			NumSongs:   p.TotalTracks,
+			ContextUri: p.ContextUri,
 		}
 		playlists = append(playlists, newP)
 	}
@@ -60,7 +61,8 @@ func InitAppData() *data.AppData {
 	}
 	tracks := []data.TrackDetail{}
 	for _, t := range curPlaylist.Tracks {
-		tracks = append(tracks, data.TrackDetail{Name: t.Name})
+		newT := data.TrackDetail{Name: t.Name, ContextUri: t.ContextUri}
+		tracks = append(tracks, newT)
 	}
 	curPlaylistDetail, posY := findSelectedPlaylist(playlists, curPlaylist.PlaylistName)
 	newPlaylist := data.Playlist{

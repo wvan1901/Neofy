@@ -193,3 +193,7 @@ func (m *mockController) GetTracksFromPlaylist(string, string, int) ([]spotify.S
 	}
 	return mocks, nil
 }
+
+func (m *mockController) StartTrack(contextUri, accessToken string, i int) error {
+	return nil
+}

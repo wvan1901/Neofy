@@ -28,9 +28,10 @@ type Playlist struct {
 }
 
 type PlaylistDetail struct {
-	Href     string
-	Name     string
-	NumSongs int
+	Href       string
+	Name       string
+	NumSongs   int
+	ContextUri string
 }
 
 type MusicPlayer struct {
@@ -53,7 +54,8 @@ type Tracks struct {
 }
 
 type TrackDetail struct {
-	Name string
+	Name       string
+	ContextUri string
 }
 
 type Display struct {
