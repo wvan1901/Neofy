@@ -9,8 +9,6 @@ import (
 
 // This is the main draw func
 func UpdateApp(d *data.AppData) {
-	d.Display.Buffer.WriteString("\033[2J") // Clears entire screen
-	//d.Display.Buffer.WriteString("\033[K") // Clears entire Line
 	// Clears Screen
 	d.Display.Buffer.WriteString("\033[?25l") // Moves Cursor
 	d.Display.Buffer.WriteString("\033[H")    // Move Cursor to upper right
@@ -31,6 +29,7 @@ func UpdateApp(d *data.AppData) {
 
 func drawAppScreen(d *data.AppData) {
 	d.Display.Buffer.WriteString("Neofy v0.0.0: " + string(d.Mode.ShortDisplay()) + "\r\n")
+	d.Display.Buffer.WriteString("\033[K")                     // Clears entire line
 	drawMusicOptions(&d.Playlist, &d.Songs, &d.Display.Buffer) // Playlist & tracks
 	drawPlayer(&d.Player, &d.Display.Buffer)
 
@@ -44,6 +43,7 @@ func drawMusicOptions(playlist *data.Playlist, tracks *data.Tracks, buf *strings
 	for i := 0; i < numRows; i++ {
 		rowString := playlist.Display.Screen[i] + "|" + tracks.Display.Screen[i] + "|" + "\r\n"
 		buf.WriteString(rowString)
+		buf.WriteString("\033[K") // Clears entire line
 	}
 }
 
@@ -55,6 +55,7 @@ func drawPlayer(p *data.MusicPlayer, buf *strings.Builder) {
 		rowString := p.Display.Screen[i] + "|\r\n"
 		//rowString := p.Display.Screen[i] + "\r\n"
 		buf.WriteString(rowString)
+		buf.WriteString("\033[K") // Clears entire line
 	}
 }
 
@@ -62,6 +63,7 @@ func printPlayerView(s []string, buf *strings.Builder) {
 	for i := range s {
 		buf.WriteString(s[i])
 		buf.WriteString("\r\n")
+		buf.WriteString("\033[K") // Clears entire line
 	}
 }
 

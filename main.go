@@ -18,6 +18,8 @@ func main() {
 
 func run(w io.Writer, args []string) error {
 	fmt.Println("Use:", w, args)
+	fmt.Println("\033[2J") // Clears Page
+
 	err := godotenv.Load()
 	if err != nil {
 		return fmt.Errorf("run: godotenv: %w", err)
