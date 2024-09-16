@@ -98,7 +98,6 @@ func LoginUser(clientId string) (string, error) {
 	time.Sleep(2 * time.Second)
 	close(codeChan)
 	// User is logged in by having a code
-	//fmt.Println("Wicho: Code:", code)
 	return code, nil
 }
 
@@ -115,7 +114,6 @@ func UserAccessAndRefreshToken(code, clientId, clientSecret string) (string, str
 	}
 	authString := clientId + ":" + clientSecret
 	encodedAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(authString))
-	//fmt.Println("Wicho: encoded:", encodedAuth)
 	req.Header.Add("Authorization", encodedAuth)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	c := http.Client{}

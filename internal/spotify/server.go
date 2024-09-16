@@ -3,7 +3,6 @@ package spotify
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -31,7 +30,6 @@ func callbackHandler(codeChan chan string, done chan bool) func(w http.ResponseW
 		code := r.URL.Query().Get("code")
 		if code != "" {
 			codeChan <- code
-			fmt.Println("Found Code")
 			// Send to chan that we are done (so shut server down)
 			defer func() {
 				done <- true
@@ -45,11 +43,10 @@ func callbackHandler(codeChan chan string, done chan bool) func(w http.ResponseW
 	}
 }
 
-func (s *loginServer) startHttp() {
+func (s *loginServer) startHttpThenTerminate() {
 	if err := s.server.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("ListenAndServe(): %v", err)
 	}
-	fmt.Println("Terminated http server")
 }
 
 func (s *loginServer) endHttp() {
@@ -60,7 +57,7 @@ func (s *loginServer) endHttp() {
 }
 
 func (s *loginServer) RunServer() {
-	go s.startHttp()
+	go s.startHttpThenTerminate()
 	go s.isDone()
 }
 
