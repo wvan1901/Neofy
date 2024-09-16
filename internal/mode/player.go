@@ -143,15 +143,15 @@ func refreshPlayer(accessToken string, mp *data.MusicPlayer) error {
 	}
 	mp.IsPlaying = player.IsPlaying
 	mp.IsShuffled = player.IsShuffled
-	mp.CurrentSong.Name = player.SongName
-	mp.CurrentSong.Artist = player.Artist
+	mp.PlayingSong.Name = player.SongName
+	mp.PlayingSong.Artist = player.Artist
 	mp.Repeat = player.Repeat
 	if player.SongProgress != nil {
 		p := time.Duration(*player.SongProgress * 1000000)
-		mp.CurrentSong.Progress = &p
+		mp.PlayingSong.Progress = &p
 	} else {
-		mp.CurrentSong.Progress = nil
+		mp.PlayingSong.Progress = nil
 	}
-	mp.CurrentSong.Duration = time.Duration(player.SongDuration * 1000000)
+	mp.PlayingSong.Duration = time.Duration(player.SongDuration * 1000000)
 	return nil
 }

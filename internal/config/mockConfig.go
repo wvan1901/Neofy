@@ -38,7 +38,7 @@ func InitMock() *data.AppData {
 		SupportsVolume: true,
 		Volume:         77,
 		Repeat:         "NONE",
-		CurrentSong: data.Song{
+		PlayingSong: data.Song{
 			Name:     "505",
 			Artist:   "Artic Monkeys",
 			Duration: time.Millisecond * 1000 * 60,

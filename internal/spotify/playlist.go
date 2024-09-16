@@ -66,7 +66,7 @@ func (SpotifyPlayer) GetTracksFromPlaylist(hrefUrl, accessToken string, numSongs
 	}
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(numSongs))
-	params.Add("fields", "items(track(name, uri))")
+	params.Add("fields", "items(track(name, uri, duration_ms, artists.name))")
 	apiUrl := hrefUrl + "?" + params.Encode()
 
 	headerStr := "Bearer " + accessToken
@@ -100,9 +100,16 @@ func (SpotifyPlayer) GetTracksFromPlaylist(hrefUrl, accessToken string, numSongs
 
 	var tracks []SlimTrackInfo
 	for _, item := range respStruct.Items {
+		artists := []SlimArtistInfo{}
+		for _, a := range item.Track.Artists {
+			artists = append(artists, SlimArtistInfo{Name: a.Name})
+		}
+
 		newTrack := SlimTrackInfo{
 			Name:       item.Track.Name,
 			ContextUri: item.Track.Uri,
+			DurationMs: item.Track.DurationMs,
+			Artist:     artists,
 		}
 		tracks = append(tracks, newTrack)
 	}
@@ -120,7 +127,7 @@ func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWith
 		return nil, fmt.Errorf("GetPlaylist: %w", err)
 	}
 	params := url.Values{}
-	params.Add("fields", "name,uri,tracks.items(track(name,uri))")
+	params.Add("fields", "name,uri,tracks.items(track(name,uri, duration_ms,artists.name))")
 	apiUrl := hrefUrl + "?" + params.Encode()
 
 	headerStr := "Bearer " + accessToken
@@ -153,9 +160,16 @@ func (SpotifyPlayer) GetPlaylist(hrefUrl, accessToken string) (*SlimPlaylistWith
 	}
 	var tracks []SlimTrackInfo
 	for _, item := range respStruct.Tracks.Items {
+		artists := []SlimArtistInfo{}
+		for _, a := range item.Track.Artists {
+			artists = append(artists, SlimArtistInfo{Name: a.Name})
+		}
+
 		newTrack := SlimTrackInfo{
 			Name:       item.Track.Name,
 			ContextUri: item.Track.Uri,
+			DurationMs: item.Track.DurationMs,
+			Artist:     artists,
 		}
 		tracks = append(tracks, newTrack)
 	}
@@ -187,6 +201,12 @@ type SlimPlaylistData struct {
 type SlimTrackInfo struct {
 	Name       string
 	ContextUri string
+	DurationMs int
+	Artist     []SlimArtistInfo
+}
+
+type SlimArtistInfo struct {
+	Name string
 }
 
 type SlimPlaylistWithTracks struct {
@@ -344,8 +364,12 @@ type TracksFromPlaylistResp struct {
 type SlimTrackResp struct {
 	Items []struct {
 		Track struct {
-			Name string `json:"name"`
-			Uri  string `json:"uri"`
+			Name       string `json:"name"`
+			Uri        string `json:"uri"`
+			DurationMs int    `json:"duration_ms"`
+			Artists    []struct {
+				Name string `json:"name"`
+			} `json:"artists"`
 		} `json:"track"`
 	} `json:"items"`
 }
@@ -354,8 +378,12 @@ type SlimPlaylistResp struct {
 	Tracks struct {
 		Items []struct {
 			Track struct {
-				Name string `json:"name"`
-				Uri  string `json:"uri"`
+				Name       string `json:"name"`
+				Uri        string `json:"uri"`
+				DurationMs int    `json:"duration_ms"`
+				Artists    []struct {
+					Name string `json:"name"`
+				} `json:"artists"`
 			} `json:"track"`
 		} `json:"items"`
 	} `json:"tracks"`

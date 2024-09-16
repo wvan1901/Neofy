@@ -4,6 +4,7 @@ import (
 	"neofy/internal/consts"
 	"neofy/internal/data"
 	"neofy/internal/terminal"
+	"time"
 )
 
 type Track struct{}
@@ -39,9 +40,16 @@ func (*Track) ProcessInput(d *data.AppData) {
 		if err != nil {
 			break
 		}
+		artist := "???"
+		if len(newTrack.Artists) > 0 {
+			artist = newTrack.Artists[0].Name
+		}
+		zero := time.Duration(0)
 		d.Songs.SelectedTrack = &newTrack
-		// TODO: Handle updating player state
-		d.Player.CurrentSong.Name = newTrack.Name
+		d.Player.PlayingSong.Name = newTrack.Name
+		d.Player.PlayingSong.Artist = artist
+		d.Player.PlayingSong.Duration = time.Duration(newTrack.DurationMs * 1000000)
+		d.Player.PlayingSong.Progress = &zero
 	}
 }
 

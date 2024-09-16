@@ -87,7 +87,7 @@ func InitAppData() *data.AppData {
 		IsPlaying:      playerData.IsPlaying,
 		SupportsVolume: playerData.SupportsVolume,
 		IsShuffled:     playerData.IsShuffled,
-		CurrentSong: data.Song{
+		PlayingSong: data.Song{
 			Name:     playerData.SongName,
 			Artist:   playerData.Artist,
 			Progress: curSongProgress,

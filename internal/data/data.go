@@ -36,13 +36,13 @@ type PlaylistDetail struct {
 
 type MusicPlayer struct {
 	Controller     spotify.Controller
-	CurrentSong    Song
 	Display        Display // What to show in cli
 	IsPlaying      bool    // Is something playing
 	IsShuffled     bool    // Is playlist suffled
-	Repeat         string  // track, context, off
-	SupportsVolume bool    // Does Device support volume
-	Volume         int     // 0-100
+	PlayingSong    Song
+	Repeat         string // track, context, off
+	SupportsVolume bool   // Does Device support volume
+	Volume         int    // 0-100
 }
 
 type Tracks struct {
@@ -54,8 +54,14 @@ type Tracks struct {
 }
 
 type TrackDetail struct {
-	Name       string
+	Artists    []ArtistDetail
 	ContextUri string
+	DurationMs int
+	Name       string
+}
+
+type ArtistDetail struct {
+	Name string
 }
 
 type Display struct {

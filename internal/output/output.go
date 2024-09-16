@@ -114,16 +114,16 @@ func updatePlayerDisplay(mp *data.MusicPlayer) {
 			//"x>    |<    ||    >|    [≥]    <|) =====-----"
 			str = fitStringInMiddle(shuffled+"    |<    "+playPause+"    >|    "+loop+"    "+volume, ' ', mp.Display.Width)
 		case 0:
-			if mp.CurrentSong.Name == "" {
+			if mp.PlayingSong.Name == "" {
 				str = fitStringToWidth("", mp.Display.Width)
 			} else {
-				str = fitStringToWidth("Playing: "+mp.CurrentSong.Name, mp.Display.Width)
+				str = fitStringToWidth("Playing: "+mp.PlayingSong.Name, mp.Display.Width)
 			}
 		case mp.Display.Height - 3:
-			if mp.CurrentSong.Artist == "" {
+			if mp.PlayingSong.Artist == "" {
 				str = fitStringToWidth("", mp.Display.Width)
 			} else {
-				str = fitStringToWidth("Artist: "+mp.CurrentSong.Artist, mp.Display.Width)
+				str = fitStringToWidth("Artist: "+mp.PlayingSong.Artist, mp.Display.Width)
 			}
 		}
 		s = append(s, str)
