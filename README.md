@@ -80,8 +80,7 @@ Tracks Keybinds:
 * Add support to pick user devices
 
 # Bugs
-* Fix Tracks offset
-* Fix Playlist offset
+* Fix non alphanumeric characters displaying width 2
 
 # Contribution
 This is a personal project & I'll update the app to suit

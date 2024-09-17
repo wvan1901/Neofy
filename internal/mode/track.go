@@ -23,12 +23,18 @@ func (*Track) ProcessInput(d *data.AppData) {
 		} else if d.Songs.CursorPosY+1 >= len(d.Songs.Tracks) {
 			break
 		}
+		if d.Songs.CursorPosY >= len(d.Songs.Display.Screen)-3+d.Songs.RowOffset {
+			d.Songs.RowOffset++
+		}
 		d.Songs.CursorPosY++
 	case 'k', 'K':
 		if d.Songs.CursorPosY < 0 {
 			break
 		} else if d.Songs.CursorPosY-1 < 0 {
 			break
+		}
+		if d.Songs.CursorPosY <= d.Songs.RowOffset {
+			d.Songs.RowOffset--
 		}
 		d.Songs.CursorPosY--
 	case 's', 'S':

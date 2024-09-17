@@ -55,7 +55,7 @@ func InitMock() *data.AppData {
 			progress:   &prog,
 		},
 	}
-	playlists := []data.PlaylistDetail{{Name: "P1"}, {Name: "P2"}, {Name: "P3"}, {Name: "P4"}, {Name: "P5"}}
+	playlists := createRandPlaylist()
 	posY := 0
 	curPlaylist := playlists[posY]
 	newPlaylist := data.Playlist{
@@ -177,16 +177,17 @@ func (m *mockController) ShuffleMode(_ string, b bool) error {
 }
 
 func (m *mockController) GetUserPlaylists(accessToken string) ([]spotify.SlimPlaylistData, error) {
-	mockPlaylists := []spotify.SlimPlaylistData{
-		{Name: "P1", DetailRefUrl: "Ref1", TotalTracks: 11, TracksHref: "t1"},
-		{Name: "P2", DetailRefUrl: "Ref2", TotalTracks: 12, TracksHref: "t2"},
-		{Name: "P3", DetailRefUrl: "Ref3", TotalTracks: 13, TracksHref: "t3"},
+	randLen := rand.IntN(50) + 1
+	playlists := []spotify.SlimPlaylistData{}
+	for i := 1; i <= randLen; i++ {
+		newP := spotify.SlimPlaylistData{Name: "P" + strconv.Itoa(i)}
+		playlists = append(playlists, newP)
 	}
-	return mockPlaylists, nil
+	return playlists, nil
 }
 
 func (m *mockController) GetTracksFromPlaylist(string, string, int) ([]spotify.SlimTrackInfo, error) {
-	randLen := rand.IntN(10) + 1
+	randLen := rand.IntN(50) + 1
 	mocks := []spotify.SlimTrackInfo{}
 	for i := 1; i <= randLen; i++ {
 		mocks = append(mocks, spotify.SlimTrackInfo{Name: "Song" + strconv.Itoa(i)})
@@ -196,4 +197,14 @@ func (m *mockController) GetTracksFromPlaylist(string, string, int) ([]spotify.S
 
 func (m *mockController) StartTrack(contextUri, accessToken string, i int) error {
 	return nil
+}
+
+func createRandPlaylist() []data.PlaylistDetail {
+	randLen := rand.IntN(77) + 1
+	p := []data.PlaylistDetail{}
+	for i := 1; i <= randLen; i++ {
+		newP := data.PlaylistDetail{Name: "P" + strconv.Itoa(i)}
+		p = append(p, newP)
+	}
+	return p
 }
