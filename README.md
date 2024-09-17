@@ -5,6 +5,8 @@ Spotify Controller Cli App
 - [Why I Built This](#why-did-i-build-this)
 - [Usage](#usage)
 - [Installation](#installation)
+- [Future additions](#future-addtions)
+- [Bugs](#bugs)
 - [Contribution](#contribution)
 
 # Why did I build this
@@ -38,8 +40,11 @@ When your run the app it will redirect you to confirm access to spoity,
 once you accept this you can return to the cli.
 
 # Usage
-The Cli has a player which allows us to contril the music, the
-following are the controls:
+The Cli has 3 diffrent modes: Player, Playlists, Tracks
+Player Keybinds:
+* `<C-c>`: Exits app
+* `u`: Switch to playlist mode
+* `t`: Switch to track mode
 * `s`: Toggles shuffle mode (on/off)
 * `b`: Goes to previous song
 * `p`: Plays song
@@ -49,6 +54,34 @@ following are the controls:
 * `-`: Lower the volume if applicable (Lowers by 10, range 0-100)
 * `+`, `=`: Raises the volume if applicable (Raises by 10, range 0-100)
 * `f`: Refreshes the current display data
+
+Playlist Keybinds:
+* `<C-c>`, `<ESC>`: Switch to player mode
+* `t`: Swtich to track mode
+* `j`: Move Down
+* `k`: Move Up
+* `s`: Select Playlist
+
+Tracks Keybinds:
+* `<C-c>`, `<ESC>`: Switch to player mode
+* `u`: Swtich to playlist mode
+* `j`: Move Down
+* `k`: Move Up
+* `s`: Play track
+
+# Future additions
+* Improve playlist & tracks navigation
+* Add autosyncing when track ends
+* Add Syncing to Spotify (Tracks & playlists)
+* Customizable inputs
+* Customizable window sizes
+* Add Skimming for a track
+* Add support for windows
+* Add support to pick user devices
+
+# Bugs
+* Fix Tracks offset
+* Fix Playlist offset
 
 # Contribution
 This is a personal project & I'll update the app to suit
