@@ -57,6 +57,8 @@ Player Keybinds:
 
 Playlist Keybinds:
 * `<C-c>`, `<ESC>`: Switch to player mode
+* `<C-u>`: Moves 10 rows up
+* `<C-d>`: Moves 10 rows down
 * `t`: Swtich to track mode
 * `j`: Move Down
 * `k`: Move Up
@@ -64,15 +66,17 @@ Playlist Keybinds:
 
 Tracks Keybinds:
 * `<C-c>`, `<ESC>`: Switch to player mode
+* `<C-u>`: Moves 10 rows up
+* `<C-d>`: Moves 10 rows down
 * `u`: Swtich to playlist mode
 * `j`: Move Down
 * `k`: Move Up
 * `s`: Play track
 
 # Future additions
-* Improve playlist & tracks navigation
 * Add autosyncing when track ends
 * Add Syncing to Spotify (Tracks & playlists)
+* Add support to non tracks (podcasts)
 * Customizable inputs
 * Customizable window sizes
 * Add Skimming for a track

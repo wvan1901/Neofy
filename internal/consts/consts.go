@@ -17,4 +17,6 @@ const (
 	BACKSPACE        = 1012
 	CONTROL_S        = 1013
 	CONTROL_F        = 1014
+	CONTROL_U        = 1015
+	CONTROL_D        = 1016
 )

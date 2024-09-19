@@ -61,6 +61,10 @@ func ReadInputKey() rune {
 			return consts.CONTROL_S
 		case 6: //CTRL-F
 			return consts.CONTROL_F
+		case 4: //CTRL-D
+			return consts.CONTROL_D
+		case 21: //CTRL-U
+			return consts.CONTROL_U
 		default:
 			return consts.NOTHINGKEY
 		}

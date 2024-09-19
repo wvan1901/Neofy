@@ -15,6 +15,28 @@ func (*Track) ProcessInput(d *data.AppData) {
 	case consts.CONTROLCASCII, consts.ESC:
 		d.Mode = &Player{}
 		break
+	case consts.CONTROL_U:
+		skipBy := 10
+		if d.Songs.CursorPosY < 0 {
+			break
+		} else if d.Songs.CursorPosY-skipBy < 0 {
+			break
+		}
+		if d.Songs.CursorPosY-skipBy <= d.Songs.RowOffset {
+			d.Songs.RowOffset -= skipBy
+		}
+		d.Songs.CursorPosY -= skipBy
+	case consts.CONTROL_D:
+		skipBy := 10
+		if d.Songs.CursorPosY < 0 {
+			break
+		} else if d.Songs.CursorPosY+skipBy >= len(d.Songs.Tracks) {
+			break
+		}
+		if d.Songs.CursorPosY+skipBy >= len(d.Songs.Display.Screen)-3+d.Songs.RowOffset {
+			d.Songs.RowOffset += skipBy
+		}
+		d.Songs.CursorPosY += skipBy
 	case 'u', 'U':
 		d.Mode = &Playlist{}
 	case 'j', 'J':
