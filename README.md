@@ -1,5 +1,6 @@
 # Neofy
 Spotify Controller Cli App
+`NOTE` In order to use Neofy you will need a premium spotify account
 
 # Table Of Contents
 - [Why I Built This](#why-did-i-build-this)
@@ -13,7 +14,7 @@ Spotify Controller Cli App
 I'm a developer that enjoys having music in the background.
 I do development work mostly on my mac and I have spotify
 running in the background, I also have youtube videos queued
-in the background to help me or for lesuire. When I click the
+in the background to help me or for leisure. When I click the
 previous, pause/play or next button on my keyboard it seems
 like my mac selects at random to change my spotify or youtube.
 My solutions was Neofy, a spotify cli app that allows me to
@@ -21,12 +22,14 @@ control my spotify.
 Why a cli app? I usually develop with tmux so I can quickly
 switch to the app.
 Why not just do ... etc? I had a problem which I wnated to
-solve by coding, not the most optimal solution by the most fun for me.
+solve by coding, not the most optimal solution but the most fun for me.
 
 # Installation
-TODO: Finish writing section\
+Currently this app is under development so no current installation.
+You can run the app as a golang program.
 To run this project you will need to have spotifys developer access.
 You will need to set up a application & copy the client id & client secret.
+For steps on how to do this follow spotify [guide](https://developer.spotify.com/documentation/web-api/concepts/apps)
 With this you will need to add the following .env file in the root directory:
 ```
 SPOTIFY_CLIENT_ID=<YOUR_CLIENT_ID>
@@ -41,6 +44,7 @@ once you accept this you can return to the cli.
 
 # Usage
 The Cli has 3 diffrent modes: Player, Playlists, Tracks
+`NOTE` The default mode is player
 Player Keybinds:
 * `<C-c>`: Exits app
 * `u`: Switch to playlist mode
