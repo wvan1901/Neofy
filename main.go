@@ -19,10 +19,20 @@ func main() {
 func run(w io.Writer, args []string) error {
 	fmt.Println("Use:", w, args)
 	fmt.Println("\033[2J") // Clears Page
+	runMockMode := setArgsConfigs(args)
 
 	err := godotenv.Load()
 	if err != nil {
 		return fmt.Errorf("run: godotenv: %w", err)
 	}
-	return internal.RunApp()
+	return internal.RunApp(runMockMode)
+}
+
+func setArgsConfigs(args []string) bool {
+	if len(args) >= 2 {
+		if args[1] == "-t" {
+			return true
+		}
+	}
+	return false
 }

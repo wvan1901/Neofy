@@ -1,9 +1,11 @@
 # Neofy
 Spotify Controller Cli App
-`NOTE` In order to use Neofy you will need a premium spotify account
 
 # Table Of Contents
 - [Why I Built This](#why-did-i-build-this)
+- [Run Mock](#run-mock)
+- [Requirements](#requirements)
+- [Limitations](#limitations)
 - [Usage](#usage)
 - [Installation](#installation)
 - [Future additions](#future-addtions)
@@ -24,22 +26,41 @@ switch to the app.
 Why not just do ... etc? I had a problem which I wnated to
 solve by coding, not the most optimal solution but the most fun for me.
 
+# Run Mock
+If you dont have spotify premium, dont want to make a spotify app,
+or just want to check out this project without the spotify music 
+controller. You can run a mock of the app with the command below:
+```bash
+go run main.go -t
+```
+
+# Requirements
+In order to run this cli app properly you will need 3 things:
+* Spotify Premium
+* Spotify App
+* Linux based terminal
+`NOTE` You will need to set up a application & copy the client id & client secret.
+For steps on how to do this follow spotify [guide](https://developer.spotify.com/documentation/web-api/concepts/apps)
+
+# Limitations
+Neofy is built using the spotify web api. The api
+doesn't handle streaming so you will need a spotify client open.
+
 # Installation
 Currently this app is under development so no current installation.
 You can run the app as a golang program.
-To run this project you will need to have spotifys developer access.
-You will need to set up a application & copy the client id & client secret.
-For steps on how to do this follow spotify [guide](https://developer.spotify.com/documentation/web-api/concepts/apps)
-With this you will need to add the following .env file in the root directory:
+With spotify web credentials you will need to add the following
+`.env` file in the root directory:
 ```
 SPOTIFY_CLIENT_ID=<YOUR_CLIENT_ID>
 SPOTIFY_CLIENT_SECRET=<YOUR_CLIENT_SECRET>
 ```
 Once this has been added you can just run
 ```bash
+# Note: In order to run the app spotify must be playing a track inside a playlist
 go run main.go
 ```
-When your run the app it will redirect you to confirm access to spoity,
+When you run the app it will redirect you to confirm access to spoity,
 once you accept this you can return to the cli.
 
 # Usage
@@ -94,3 +115,5 @@ Tracks Keybinds:
 This is a personal project & I'll update the app to suit
 my needs. If there are any issues or suggestions open a issue.
 
+# Credit
+* Inspiration for this project came from this [repo](#https://github.com/Rigellute/spotify-tui)
