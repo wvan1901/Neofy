@@ -116,4 +116,4 @@ This is a personal project. I'll update the app to suit
 my needs. If there are any issues or suggestions, open a issue.
 
 # Credit
-* Inspiration for this project came from this [repo](#https://github.com/Rigellute/spotify-tui)
+* Inspiration for this project came from this [repo](https://github.com/Rigellute/spotify-tui)
