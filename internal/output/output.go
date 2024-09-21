@@ -18,7 +18,6 @@ func UpdateApp(d *data.AppData) {
 	updateTracksDisplay(&d.Songs)
 	updatePlayerDisplay(&d.Player)
 
-	// Draw everything
 	drawAppScreen(d)
 
 	d.Display.Buffer.WriteString("\033[?25l") // Moves Cursor
@@ -28,7 +27,7 @@ func UpdateApp(d *data.AppData) {
 }
 
 func drawAppScreen(d *data.AppData) {
-	d.Display.Buffer.WriteString("Neofy v0.0.0: " + string(d.Mode.ShortDisplay()) + "\r\n")
+	d.Display.Buffer.WriteString("Neofy v0.0.0: " + drawMode(d.Mode.ShortDisplay()) + "\r\n")
 	d.Display.Buffer.WriteString("\033[K")                     // Clears entire line
 	drawMusicOptions(&d.Playlist, &d.Songs, &d.Display.Buffer) // Playlist & tracks
 	drawPlayer(&d.Player, &d.Display.Buffer)
@@ -217,4 +216,16 @@ func fitStringInMiddle(str string, pad rune, width int) string {
 	leftPad := strings.Repeat(string(pad), leftPadLen)
 	rightPad := strings.Repeat(string(pad), rightPadLen)
 	return leftPad + str + rightPad
+}
+
+func drawMode(r rune) string {
+	switch r {
+	case 'P':
+		return "\033[42m\033[30m " + string(r) + " \033[39m\033[40m"
+	case 'T':
+		return "\033[43m\033[30m " + string(r) + " \033[39m\033[40m"
+	case 'U':
+		return "\033[44m\033[30m " + string(r) + " \033[39m\033[40m"
+	}
+	return "\033[45m\033[30m " + string(r) + " \033[39m\033[40m"
 }
